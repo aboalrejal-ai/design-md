@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design MD Hub | Ultimate AI Design Guidelines Catalog</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="A curated collection of 93+ production-grade DESIGN.md files representing the design systems of top companies. Use with Claude Design, Cursor, and v0 to scaffold UI instantly.">
+    <meta name="keywords" content="design system, design.md, claude design, cursor rules, v0 design tokens, anthropic brand, visual guidelines, UI kit, frontend tokens">
+    <meta name="author" content="Mohammed Nadhir Abo Alrejal">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Marked.js for Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="light-mode">
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-palette"></i></div>
+                <div class="logo-text">
+                    <h1>Design MD Hub</h1>
+                    <span>Visual Systems for AI Coding Agents</span>
+                </div>
+            </div>
+            
+            <nav class="nav-links">
+                <span class="curator-tag">
+                    <i class="fa-solid fa-user-check"></i> Curated by <strong>Mohammed Nadhir Abo Alrejal</strong>
+                </span>
+                <a href="https://github.com/bergside/design-md" target="_blank" class="btn btn-outline btn-sm">
+                    <i class="fa-brands fa-github"></i> Star on GitHub
+                </a>
+                <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span> Open Source Visual Intelligence Catalog
+            </div>
+            <h2>Universal Design Systems <br><span class="highlight">Tailored for AI Agents</span></h2>
+            <p class="hero-desc">
+                An extensive, organized repository of <strong>93+ Design MD specifications</strong>. Copy any file directly into your AI context (Cursor, Claude Design, Gemini, or v0) to scaffold pixel-perfect, on-brand interfaces instantly.
+            </p>
+            
+            <!-- Search & Filtering Box -->
+            <div class="filter-box">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search brands, companies, styles (e.g. stripe, dark, luxury)..." autocomplete="off">
+                    <button id="clear-search" class="clear-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-pill"><i class="fa-solid fa-folder-open"></i> <span id="stat-count">93</span> Specs</div>
+                <div class="stat-pill"><i class="fa-solid fa-shapes"></i> <span id="stat-cat-count">9</span> Categories</div>
+                <div class="stat-pill"><i class="fa-solid fa-code"></i> Production Ready</div>
+            </div>
+        </section>
+
+        <!-- Catalog Container -->
+        <section class="catalog-section">
+            <!-- Category Pills Navigation -->
+            <div class="category-pills-container">
+                <div class="category-pills" id="category-pills">
+                    <button class="pill-btn active" data-category="all">All Brands</button>
+                    <!-- JavaScript will insert category pills here -->
+                </div>
+            </div>
+            
+            <!-- Grid of Cards -->
+            <div class="brands-grid" id="brands-grid">
+                <!-- JavaScript will populate cards here -->
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading design system catalog...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Reader Mode / Overlay Drawer -->
+    <div class="reader-drawer" id="reader-drawer">
+        <div class="drawer-overlay" id="drawer-overlay"></div>
+        <div class="drawer-container">
+            <!-- Drawer Header -->
+            <div class="drawer-header">
+                <div class="drawer-brand-info">
+                    <h3 id="drawer-title">Brand Name</h3>
+                    <div class="drawer-badges">
+                        <span id="drawer-category" class="badge">Category</span>
+                        <span id="drawer-size" class="badge badge-outline">30 KB</span>
+                    </div>
+                </div>
+                <div class="drawer-actions">
+                    <button id="btn-copy-raw" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-copy"></i> Copy Markdown
+                    </button>
+                    <button id="btn-download-file" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-download"></i> Download
+                    </button>
+                    <button id="btn-close-drawer" class="btn-close" aria-label="Close Panel">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Drawer Body -->
+            <div class="drawer-body">
+                <!-- Left Outline Sidebar -->
+                <aside class="drawer-sidebar">
+                    <div class="sidebar-section-title">GUIDELINES INDEX</div>
+                    <nav class="sidebar-nav" id="sidebar-nav">
+                        <!-- Dynamic TOC headings will go here -->
+                    </nav>
+                    
+                    <div class="swatch-panel">
+                        <div class="sidebar-section-title">EXTRACTED PALETTE</div>
+                        <div class="palette-swatch-list" id="drawer-palette-list">
+                            <!-- Visual color chips will go here -->
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- Right Markdown Content Panel -->
+                <div class="drawer-content-wrapper">
+                    <div class="markdown-body" id="markdown-body">
+                        <!-- Rendered HTML will go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <div class="footer-logo">
+                    <i class="fa-solid fa-palette"></i> Design MD Hub
+                </div>
+                <p>Curating the design dna of the modern web for AI-assisted workflows.</p>
+            </div>
+            <div class="footer-right">
+                <p class="copyright">&copy; 2026 Mohammed Nadhir Abo Alrejal. Released under the MIT License.</p>
+                <div class="social-icons">
+                    <a href="https://github.com/bergside" target="_blank" aria-label="GitHub Developer Profile"><i class="fa-brands fa-github"></i></a>
+                    <a href="mailto:mohammed.abualrejal@gmail.com" aria-label="Contact Email"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-check-circle"></i> <span id="toast-message">Copied to clipboard!</span>
+    </div>
+
+    <!-- Database and Application Logic -->
+    <script src="brands_metadata.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

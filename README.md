@@ -13,7 +13,7 @@ Simply copy these markdown files into your AI assistant's context (**Claude Desi
 
 ## 👨‍💻 Developer & Curator
 
-Created, organized, and curated by **Mohammed Nadhir Abo Alrejal (محمد نذير ابوالرجال)**.
+Created, organized, and curated by **Mohammed Abo Alrejal**.
 GitHub Profile: [aboalrejal-ai](https://github.com/aboalrejal-ai)
 
 ---

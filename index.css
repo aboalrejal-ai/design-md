@@ -538,10 +538,11 @@ a:hover {
 
 .card-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
     border-top: 1px solid var(--border-color);
     padding-top: 16px;
+    width: 100%;
 }
 
 .btn-card-action {
@@ -554,6 +555,30 @@ a:hover {
 .brand-card:hover .btn-card-action {
     background-color: var(--accent-orange);
     color: #ffffff;
+}
+
+.card-action-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-card-secondary {
+    flex: 1;
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    justify-content: center;
+}
+
+.btn-card-secondary:hover {
+    border-color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 /* Loading & Empty States */

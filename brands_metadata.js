@@ -2,7 +2,7 @@ const BRANDS_METADATA = [
   {
     "brand": "airbnb",
     "name": "Airbnb",
-    "file": "Design.md/DESIGN-airbnb.md",
+    "file": "designs/DESIGN-airbnb.md",
     "category": "E-commerce, Retail & Food",
     "size": "30.3 KB",
     "size_bytes": 31062,
@@ -17,7 +17,7 @@ const BRANDS_METADATA = [
   {
     "brand": "airtable",
     "name": "Airtable",
-    "file": "Design.md/DESIGN-airtable.md",
+    "file": "designs/DESIGN-airtable.md",
     "category": "Design & Creative Tools",
     "size": "35.0 KB",
     "size_bytes": 35820,
@@ -32,7 +32,7 @@ const BRANDS_METADATA = [
   {
     "brand": "alpine_observatory",
     "name": "Alpine Observatory",
-    "file": "Design.md/DESIGN-alpine_observatory.md",
+    "file": "designs/DESIGN-alpine_observatory.md",
     "category": "Concept & Creative Themes",
     "size": "6.9 KB",
     "size_bytes": 7057,
@@ -47,7 +47,7 @@ const BRANDS_METADATA = [
   {
     "brand": "anthropic",
     "name": "Anthropic",
-    "file": "Design.md/DESIGN-anthropic.md",
+    "file": "designs/DESIGN-anthropic.md",
     "category": "AI & LLM Platforms",
     "size": "3.0 KB",
     "size_bytes": 3037,
@@ -62,7 +62,7 @@ const BRANDS_METADATA = [
   {
     "brand": "apple",
     "name": "Apple",
-    "file": "Design.md/DESIGN-apple.md",
+    "file": "designs/DESIGN-apple.md",
     "category": "Media, Consumer Tech & Space",
     "size": "36.8 KB",
     "size_bytes": 37658,
@@ -77,7 +77,7 @@ const BRANDS_METADATA = [
   {
     "brand": "atlassian",
     "name": "Atlassian",
-    "file": "Design.md/DESIGN-atlassian.md",
+    "file": "designs/DESIGN-atlassian.md",
     "category": "Developer Tools & IDEs",
     "size": "3.2 KB",
     "size_bytes": 3266,
@@ -92,7 +92,7 @@ const BRANDS_METADATA = [
   {
     "brand": "atmospheric-glass",
     "name": "Atmospheric Glass",
-    "file": "Design.md/DESIGN-atmospheric-glass.md",
+    "file": "designs/DESIGN-atmospheric-glass.md",
     "category": "Concept & Creative Themes",
     "size": "8.7 KB",
     "size_bytes": 8869,
@@ -107,7 +107,7 @@ const BRANDS_METADATA = [
   {
     "brand": "binance",
     "name": "Binance",
-    "file": "Design.md/DESIGN-binance.md",
+    "file": "designs/DESIGN-binance.md",
     "category": "Fintech & Crypto",
     "size": "39.6 KB",
     "size_bytes": 40552,
@@ -122,7 +122,7 @@ const BRANDS_METADATA = [
   {
     "brand": "bmw-m",
     "name": "BMW M-Series",
-    "file": "Design.md/DESIGN-bmw-m.md",
+    "file": "designs/DESIGN-bmw-m.md",
     "category": "Other / Uncategorized",
     "size": "30.5 KB",
     "size_bytes": 31200,
@@ -137,7 +137,7 @@ const BRANDS_METADATA = [
   {
     "brand": "bmw",
     "name": "BMW",
-    "file": "Design.md/DESIGN-bmw.md",
+    "file": "designs/DESIGN-bmw.md",
     "category": "Other / Uncategorized",
     "size": "27.8 KB",
     "size_bytes": 28451,
@@ -152,7 +152,7 @@ const BRANDS_METADATA = [
   {
     "brand": "bugatti",
     "name": "Bugatti",
-    "file": "Design.md/DESIGN-bugatti.md",
+    "file": "designs/DESIGN-bugatti.md",
     "category": "Other / Uncategorized",
     "size": "28.3 KB",
     "size_bytes": 28989,
@@ -167,7 +167,7 @@ const BRANDS_METADATA = [
   {
     "brand": "cal",
     "name": "Cal",
-    "file": "Design.md/DESIGN-cal.md",
+    "file": "designs/DESIGN-cal.md",
     "category": "Productivity & SaaS",
     "size": "31.0 KB",
     "size_bytes": 31718,
@@ -182,7 +182,7 @@ const BRANDS_METADATA = [
   {
     "brand": "cartographers_atlas",
     "name": "Cartographers Atlas",
-    "file": "Design.md/DESIGN-cartographers_atlas.md",
+    "file": "designs/DESIGN-cartographers_atlas.md",
     "category": "Concept & Creative Themes",
     "size": "6.4 KB",
     "size_bytes": 6555,
@@ -197,7 +197,7 @@ const BRANDS_METADATA = [
   {
     "brand": "claude",
     "name": "Claude",
-    "file": "Design.md/DESIGN-claude.md",
+    "file": "designs/DESIGN-claude.md",
     "category": "AI & LLM Platforms",
     "size": "33.4 KB",
     "size_bytes": 34175,
@@ -212,7 +212,7 @@ const BRANDS_METADATA = [
   {
     "brand": "clay",
     "name": "Clay",
-    "file": "Design.md/DESIGN-clay.md",
+    "file": "designs/DESIGN-clay.md",
     "category": "Design & Creative Tools",
     "size": "25.6 KB",
     "size_bytes": 26246,
@@ -227,7 +227,7 @@ const BRANDS_METADATA = [
   {
     "brand": "clerk",
     "name": "Clerk",
-    "file": "Design.md/DESIGN-clerk.md",
+    "file": "designs/DESIGN-clerk.md",
     "category": "Developer Tools & IDEs",
     "size": "3.5 KB",
     "size_bytes": 3541,
@@ -242,7 +242,7 @@ const BRANDS_METADATA = [
   {
     "brand": "clickhouse",
     "name": "Clickhouse",
-    "file": "Design.md/DESIGN-clickhouse.md",
+    "file": "designs/DESIGN-clickhouse.md",
     "category": "Backend, Database & DevOps",
     "size": "25.9 KB",
     "size_bytes": 26530,
@@ -257,7 +257,7 @@ const BRANDS_METADATA = [
   {
     "brand": "cohere",
     "name": "Cohere",
-    "file": "Design.md/DESIGN-cohere.md",
+    "file": "designs/DESIGN-cohere.md",
     "category": "AI & LLM Platforms",
     "size": "20.0 KB",
     "size_bytes": 20471,
@@ -272,7 +272,7 @@ const BRANDS_METADATA = [
   {
     "brand": "coinbase",
     "name": "Coinbase",
-    "file": "Design.md/DESIGN-coinbase.md",
+    "file": "designs/DESIGN-coinbase.md",
     "category": "Fintech & Crypto",
     "size": "25.8 KB",
     "size_bytes": 26423,
@@ -287,7 +287,7 @@ const BRANDS_METADATA = [
   {
     "brand": "composio",
     "name": "Composio",
-    "file": "Design.md/DESIGN-composio.md",
+    "file": "designs/DESIGN-composio.md",
     "category": "Backend, Database & DevOps",
     "size": "20.6 KB",
     "size_bytes": 21112,
@@ -302,7 +302,7 @@ const BRANDS_METADATA = [
   {
     "brand": "cursor",
     "name": "Cursor",
-    "file": "Design.md/DESIGN-cursor.md",
+    "file": "designs/DESIGN-cursor.md",
     "category": "Developer Tools & IDEs",
     "size": "21.8 KB",
     "size_bytes": 22308,
@@ -317,7 +317,7 @@ const BRANDS_METADATA = [
   {
     "brand": "dell-1996",
     "name": "Dell (1996)",
-    "file": "Design.md/DESIGN-dell-1996.md",
+    "file": "designs/DESIGN-dell-1996.md",
     "category": "Media, Consumer Tech & Space",
     "size": "34.4 KB",
     "size_bytes": 35224,
@@ -332,7 +332,7 @@ const BRANDS_METADATA = [
   {
     "brand": "elevenlabs",
     "name": "Elevenlabs",
-    "file": "Design.md/DESIGN-elevenlabs.md",
+    "file": "designs/DESIGN-elevenlabs.md",
     "category": "AI & LLM Platforms",
     "size": "20.9 KB",
     "size_bytes": 21447,
@@ -347,7 +347,7 @@ const BRANDS_METADATA = [
   {
     "brand": "expo",
     "name": "Expo",
-    "file": "Design.md/DESIGN-expo.md",
+    "file": "designs/DESIGN-expo.md",
     "category": "Developer Tools & IDEs",
     "size": "21.7 KB",
     "size_bytes": 22186,
@@ -362,7 +362,7 @@ const BRANDS_METADATA = [
   {
     "brand": "ferrari",
     "name": "Ferrari",
-    "file": "Design.md/DESIGN-ferrari.md",
+    "file": "designs/DESIGN-ferrari.md",
     "category": "Other / Uncategorized",
     "size": "24.3 KB",
     "size_bytes": 24896,
@@ -377,7 +377,7 @@ const BRANDS_METADATA = [
   {
     "brand": "figma",
     "name": "Figma",
-    "file": "Design.md/DESIGN-figma.md",
+    "file": "designs/DESIGN-figma.md",
     "category": "Design & Creative Tools",
     "size": "32.1 KB",
     "size_bytes": 32894,
@@ -392,7 +392,7 @@ const BRANDS_METADATA = [
   {
     "brand": "framer",
     "name": "Framer",
-    "file": "Design.md/DESIGN-framer.md",
+    "file": "designs/DESIGN-framer.md",
     "category": "Design & Creative Tools",
     "size": "29.0 KB",
     "size_bytes": 29663,
@@ -407,7 +407,7 @@ const BRANDS_METADATA = [
   {
     "brand": "github",
     "name": "Github",
-    "file": "Design.md/DESIGN-github.md",
+    "file": "designs/DESIGN-github.md",
     "category": "Developer Tools & IDEs",
     "size": "3.2 KB",
     "size_bytes": 3261,
@@ -422,7 +422,7 @@ const BRANDS_METADATA = [
   {
     "brand": "hashicorp",
     "name": "Hashicorp",
-    "file": "Design.md/DESIGN-hashicorp.md",
+    "file": "designs/DESIGN-hashicorp.md",
     "category": "Backend, Database & DevOps",
     "size": "27.9 KB",
     "size_bytes": 28598,
@@ -437,7 +437,7 @@ const BRANDS_METADATA = [
   {
     "brand": "heritage",
     "name": "Heritage",
-    "file": "Design.md/DESIGN-heritage.md",
+    "file": "designs/DESIGN-heritage.md",
     "category": "Concept & Creative Themes",
     "size": "7.8 KB",
     "size_bytes": 7964,
@@ -452,7 +452,7 @@ const BRANDS_METADATA = [
   {
     "brand": "hp",
     "name": "HP",
-    "file": "Design.md/DESIGN-hp.md",
+    "file": "designs/DESIGN-hp.md",
     "category": "Media, Consumer Tech & Space",
     "size": "36.1 KB",
     "size_bytes": 37005,
@@ -467,7 +467,7 @@ const BRANDS_METADATA = [
   {
     "brand": "huggingface",
     "name": "Huggingface",
-    "file": "Design.md/DESIGN-huggingface.md",
+    "file": "designs/DESIGN-huggingface.md",
     "category": "Backend, Database & DevOps",
     "size": "3.3 KB",
     "size_bytes": 3369,
@@ -482,7 +482,7 @@ const BRANDS_METADATA = [
   {
     "brand": "ibm",
     "name": "IBM",
-    "file": "Design.md/DESIGN-ibm.md",
+    "file": "designs/DESIGN-ibm.md",
     "category": "Media, Consumer Tech & Space",
     "size": "26.4 KB",
     "size_bytes": 27031,
@@ -497,7 +497,7 @@ const BRANDS_METADATA = [
   {
     "brand": "intercom",
     "name": "Intercom",
-    "file": "Design.md/DESIGN-intercom.md",
+    "file": "designs/DESIGN-intercom.md",
     "category": "Productivity & SaaS",
     "size": "23.3 KB",
     "size_bytes": 23824,
@@ -512,7 +512,7 @@ const BRANDS_METADATA = [
   {
     "brand": "kraken",
     "name": "Kraken",
-    "file": "Design.md/DESIGN-kraken.md",
+    "file": "designs/DESIGN-kraken.md",
     "category": "Fintech & Crypto",
     "size": "4.4 KB",
     "size_bytes": 4475,
@@ -527,7 +527,7 @@ const BRANDS_METADATA = [
   {
     "brand": "lamborghini",
     "name": "Lamborghini",
-    "file": "Design.md/DESIGN-lamborghini.md",
+    "file": "designs/DESIGN-lamborghini.md",
     "category": "Other / Uncategorized",
     "size": "20.9 KB",
     "size_bytes": 21407,
@@ -542,7 +542,7 @@ const BRANDS_METADATA = [
   {
     "brand": "linear",
     "name": "Linear",
-    "file": "Design.md/DESIGN-linear.md",
+    "file": "designs/DESIGN-linear.md",
     "category": "Productivity & SaaS",
     "size": "24.3 KB",
     "size_bytes": 24902,
@@ -557,7 +557,7 @@ const BRANDS_METADATA = [
   {
     "brand": "loom",
     "name": "Loom",
-    "file": "Design.md/DESIGN-loom.md",
+    "file": "designs/DESIGN-loom.md",
     "category": "Developer Tools & IDEs",
     "size": "3.3 KB",
     "size_bytes": 3390,
@@ -572,7 +572,7 @@ const BRANDS_METADATA = [
   {
     "brand": "lovable",
     "name": "Lovable",
-    "file": "Design.md/DESIGN-lovable.md",
+    "file": "designs/DESIGN-lovable.md",
     "category": "Developer Tools & IDEs",
     "size": "17.3 KB",
     "size_bytes": 17682,
@@ -587,7 +587,7 @@ const BRANDS_METADATA = [
   {
     "brand": "mastercard",
     "name": "Mastercard",
-    "file": "Design.md/DESIGN-mastercard.md",
+    "file": "designs/DESIGN-mastercard.md",
     "category": "Fintech & Crypto",
     "size": "26.7 KB",
     "size_bytes": 27360,
@@ -602,7 +602,7 @@ const BRANDS_METADATA = [
   {
     "brand": "meridian",
     "name": "Meridian",
-    "file": "Design.md/DESIGN-meridian.md",
+    "file": "designs/DESIGN-meridian.md",
     "category": "Concept & Creative Themes",
     "size": "7.1 KB",
     "size_bytes": 7314,
@@ -617,7 +617,7 @@ const BRANDS_METADATA = [
   {
     "brand": "meta",
     "name": "Meta",
-    "file": "Design.md/DESIGN-meta.md",
+    "file": "designs/DESIGN-meta.md",
     "category": "E-commerce, Retail & Food",
     "size": "37.8 KB",
     "size_bytes": 38669,
@@ -632,7 +632,7 @@ const BRANDS_METADATA = [
   {
     "brand": "minimax",
     "name": "Minimax",
-    "file": "Design.md/DESIGN-minimax.md",
+    "file": "designs/DESIGN-minimax.md",
     "category": "AI & LLM Platforms",
     "size": "37.8 KB",
     "size_bytes": 38666,
@@ -647,7 +647,7 @@ const BRANDS_METADATA = [
   {
     "brand": "mintlify",
     "name": "Mintlify",
-    "file": "Design.md/DESIGN-mintlify.md",
+    "file": "designs/DESIGN-mintlify.md",
     "category": "Other / Uncategorized",
     "size": "43.9 KB",
     "size_bytes": 44935,
@@ -662,7 +662,7 @@ const BRANDS_METADATA = [
   {
     "brand": "miro",
     "name": "Miro",
-    "file": "Design.md/DESIGN-miro.md",
+    "file": "designs/DESIGN-miro.md",
     "category": "Design & Creative Tools",
     "size": "36.5 KB",
     "size_bytes": 37367,
@@ -677,7 +677,7 @@ const BRANDS_METADATA = [
   {
     "brand": "mistral.ai",
     "name": "Mistral.Ai",
-    "file": "Design.md/DESIGN-mistral.ai.md",
+    "file": "designs/DESIGN-mistral.ai.md",
     "category": "AI & LLM Platforms",
     "size": "35.4 KB",
     "size_bytes": 36281,
@@ -692,7 +692,7 @@ const BRANDS_METADATA = [
   {
     "brand": "mongodb",
     "name": "Mongodb",
-    "file": "Design.md/DESIGN-mongodb.md",
+    "file": "designs/DESIGN-mongodb.md",
     "category": "Backend, Database & DevOps",
     "size": "32.1 KB",
     "size_bytes": 32844,
@@ -707,7 +707,7 @@ const BRANDS_METADATA = [
   {
     "brand": "neo_esoteric_monument",
     "name": "Neo Esoteric Monument",
-    "file": "Design.md/DESIGN-neo_esoteric_monument.md",
+    "file": "designs/DESIGN-neo_esoteric_monument.md",
     "category": "Concept & Creative Themes",
     "size": "6.7 KB",
     "size_bytes": 6866,
@@ -722,7 +722,7 @@ const BRANDS_METADATA = [
   {
     "brand": "nike",
     "name": "Nike",
-    "file": "Design.md/DESIGN-nike.md",
+    "file": "designs/DESIGN-nike.md",
     "category": "E-commerce, Retail & Food",
     "size": "36.4 KB",
     "size_bytes": 37272,
@@ -737,7 +737,7 @@ const BRANDS_METADATA = [
   {
     "brand": "notion",
     "name": "Notion",
-    "file": "Design.md/DESIGN-notion.md",
+    "file": "designs/DESIGN-notion.md",
     "category": "Productivity & SaaS",
     "size": "35.2 KB",
     "size_bytes": 35997,
@@ -752,7 +752,7 @@ const BRANDS_METADATA = [
   {
     "brand": "nvidia",
     "name": "Nvidia",
-    "file": "Design.md/DESIGN-nvidia.md",
+    "file": "designs/DESIGN-nvidia.md",
     "category": "Media, Consumer Tech & Space",
     "size": "35.4 KB",
     "size_bytes": 36231,
@@ -767,7 +767,7 @@ const BRANDS_METADATA = [
   {
     "brand": "ollama",
     "name": "Ollama",
-    "file": "Design.md/DESIGN-ollama.md",
+    "file": "designs/DESIGN-ollama.md",
     "category": "AI & LLM Platforms",
     "size": "32.5 KB",
     "size_bytes": 33286,
@@ -782,7 +782,7 @@ const BRANDS_METADATA = [
   {
     "brand": "openai",
     "name": "Openai",
-    "file": "Design.md/DESIGN-openai.md",
+    "file": "designs/DESIGN-openai.md",
     "category": "AI & LLM Platforms",
     "size": "2.8 KB",
     "size_bytes": 2901,
@@ -796,7 +796,7 @@ const BRANDS_METADATA = [
   {
     "brand": "opencode.ai",
     "name": "Opencode.Ai",
-    "file": "Design.md/DESIGN-opencode.ai.md",
+    "file": "designs/DESIGN-opencode.ai.md",
     "category": "AI & LLM Platforms",
     "size": "32.4 KB",
     "size_bytes": 33168,
@@ -811,7 +811,7 @@ const BRANDS_METADATA = [
   {
     "brand": "paws-and-paths",
     "name": "Paws And Paths",
-    "file": "Design.md/DESIGN-paws-and-paths.md",
+    "file": "designs/DESIGN-paws-and-paths.md",
     "category": "Concept & Creative Themes",
     "size": "8.4 KB",
     "size_bytes": 8632,
@@ -826,7 +826,7 @@ const BRANDS_METADATA = [
   {
     "brand": "pinterest",
     "name": "Pinterest",
-    "file": "Design.md/DESIGN-pinterest.md",
+    "file": "designs/DESIGN-pinterest.md",
     "category": "Media, Consumer Tech & Space",
     "size": "36.1 KB",
     "size_bytes": 36989,
@@ -841,7 +841,7 @@ const BRANDS_METADATA = [
   {
     "brand": "playstation",
     "name": "Playstation",
-    "file": "Design.md/DESIGN-playstation.md",
+    "file": "designs/DESIGN-playstation.md",
     "category": "Media, Consumer Tech & Space",
     "size": "39.5 KB",
     "size_bytes": 40427,
@@ -856,7 +856,7 @@ const BRANDS_METADATA = [
   {
     "brand": "posthog",
     "name": "Posthog",
-    "file": "Design.md/DESIGN-posthog.md",
+    "file": "designs/DESIGN-posthog.md",
     "category": "Backend, Database & DevOps",
     "size": "40.2 KB",
     "size_bytes": 41188,
@@ -871,7 +871,7 @@ const BRANDS_METADATA = [
   {
     "brand": "railway",
     "name": "Railway",
-    "file": "Design.md/DESIGN-railway.md",
+    "file": "designs/DESIGN-railway.md",
     "category": "Fintech & Crypto",
     "size": "3.4 KB",
     "size_bytes": 3448,
@@ -886,7 +886,7 @@ const BRANDS_METADATA = [
   {
     "brand": "raycast",
     "name": "Raycast",
-    "file": "Design.md/DESIGN-raycast.md",
+    "file": "designs/DESIGN-raycast.md",
     "category": "Developer Tools & IDEs",
     "size": "41.0 KB",
     "size_bytes": 41944,
@@ -901,7 +901,7 @@ const BRANDS_METADATA = [
   {
     "brand": "renault",
     "name": "Renault",
-    "file": "Design.md/DESIGN-renault.md",
+    "file": "designs/DESIGN-renault.md",
     "category": "Other / Uncategorized",
     "size": "29.9 KB",
     "size_bytes": 30665,
@@ -916,7 +916,7 @@ const BRANDS_METADATA = [
   {
     "brand": "replicate",
     "name": "Replicate",
-    "file": "Design.md/DESIGN-replicate.md",
+    "file": "designs/DESIGN-replicate.md",
     "category": "AI & LLM Platforms",
     "size": "31.4 KB",
     "size_bytes": 32111,
@@ -931,7 +931,7 @@ const BRANDS_METADATA = [
   {
     "brand": "replit",
     "name": "Replit",
-    "file": "Design.md/DESIGN-replit.md",
+    "file": "designs/DESIGN-replit.md",
     "category": "Developer Tools & IDEs",
     "size": "3.2 KB",
     "size_bytes": 3240,
@@ -946,7 +946,7 @@ const BRANDS_METADATA = [
   {
     "brand": "resend",
     "name": "Resend",
-    "file": "Design.md/DESIGN-resend.md",
+    "file": "designs/DESIGN-resend.md",
     "category": "Productivity & SaaS",
     "size": "31.3 KB",
     "size_bytes": 32046,
@@ -961,7 +961,7 @@ const BRANDS_METADATA = [
   {
     "brand": "revolut",
     "name": "Revolut",
-    "file": "Design.md/DESIGN-revolut.md",
+    "file": "designs/DESIGN-revolut.md",
     "category": "Fintech & Crypto",
     "size": "31.9 KB",
     "size_bytes": 32670,
@@ -976,7 +976,7 @@ const BRANDS_METADATA = [
   {
     "brand": "runwayml",
     "name": "Runwayml",
-    "file": "Design.md/DESIGN-runwayml.md",
+    "file": "designs/DESIGN-runwayml.md",
     "category": "AI & LLM Platforms",
     "size": "14.3 KB",
     "size_bytes": 14597,
@@ -991,7 +991,7 @@ const BRANDS_METADATA = [
   {
     "brand": "sanity",
     "name": "Sanity",
-    "file": "Design.md/DESIGN-sanity.md",
+    "file": "designs/DESIGN-sanity.md",
     "category": "Backend, Database & DevOps",
     "size": "21.1 KB",
     "size_bytes": 21588,
@@ -1006,7 +1006,7 @@ const BRANDS_METADATA = [
   {
     "brand": "sentry",
     "name": "Sentry",
-    "file": "Design.md/DESIGN-sentry.md",
+    "file": "designs/DESIGN-sentry.md",
     "category": "Backend, Database & DevOps",
     "size": "35.2 KB",
     "size_bytes": 35995,
@@ -1021,7 +1021,7 @@ const BRANDS_METADATA = [
   {
     "brand": "shopify",
     "name": "Shopify",
-    "file": "Design.md/DESIGN-shopify.md",
+    "file": "designs/DESIGN-shopify.md",
     "category": "Design & Creative Tools",
     "size": "26.9 KB",
     "size_bytes": 27583,
@@ -1036,7 +1036,7 @@ const BRANDS_METADATA = [
   {
     "brand": "slack",
     "name": "Slack",
-    "file": "Design.md/DESIGN-slack.md",
+    "file": "designs/DESIGN-slack.md",
     "category": "Productivity & SaaS",
     "size": "24.4 KB",
     "size_bytes": 25011,
@@ -1051,7 +1051,7 @@ const BRANDS_METADATA = [
   {
     "brand": "spacex",
     "name": "Spacex",
-    "file": "Design.md/DESIGN-spacex.md",
+    "file": "designs/DESIGN-spacex.md",
     "category": "Media, Consumer Tech & Space",
     "size": "19.6 KB",
     "size_bytes": 20042,
@@ -1066,7 +1066,7 @@ const BRANDS_METADATA = [
   {
     "brand": "spotify",
     "name": "Spotify",
-    "file": "Design.md/DESIGN-spotify.md",
+    "file": "designs/DESIGN-spotify.md",
     "category": "Media, Consumer Tech & Space",
     "size": "12.9 KB",
     "size_bytes": 13201,
@@ -1081,7 +1081,7 @@ const BRANDS_METADATA = [
   {
     "brand": "starbucks",
     "name": "Starbucks",
-    "file": "Design.md/DESIGN-starbucks.md",
+    "file": "designs/DESIGN-starbucks.md",
     "category": "E-commerce, Retail & Food",
     "size": "37.0 KB",
     "size_bytes": 37909,
@@ -1096,7 +1096,7 @@ const BRANDS_METADATA = [
   {
     "brand": "stitch",
     "name": "Stitch",
-    "file": "Design.md/DESIGN-stitch.md",
+    "file": "designs/DESIGN-stitch.md",
     "category": "Fintech & Crypto",
     "size": "1.8 KB",
     "size_bytes": 1825,
@@ -1110,7 +1110,7 @@ const BRANDS_METADATA = [
   {
     "brand": "stripe",
     "name": "Stripe",
-    "file": "Design.md/DESIGN-stripe.md",
+    "file": "designs/DESIGN-stripe.md",
     "category": "Fintech & Crypto",
     "size": "24.5 KB",
     "size_bytes": 25093,
@@ -1125,7 +1125,7 @@ const BRANDS_METADATA = [
   {
     "brand": "supabase",
     "name": "Supabase",
-    "file": "Design.md/DESIGN-supabase.md",
+    "file": "designs/DESIGN-supabase.md",
     "category": "Backend, Database & DevOps",
     "size": "21.3 KB",
     "size_bytes": 21777,
@@ -1140,7 +1140,7 @@ const BRANDS_METADATA = [
   {
     "brand": "superhuman",
     "name": "Superhuman",
-    "file": "Design.md/DESIGN-superhuman.md",
+    "file": "designs/DESIGN-superhuman.md",
     "category": "Developer Tools & IDEs",
     "size": "21.8 KB",
     "size_bytes": 22325,
@@ -1155,7 +1155,7 @@ const BRANDS_METADATA = [
   {
     "brand": "tailwindcss",
     "name": "Tailwindcss",
-    "file": "Design.md/DESIGN-tailwindcss.md",
+    "file": "designs/DESIGN-tailwindcss.md",
     "category": "Developer Tools & IDEs",
     "size": "3.2 KB",
     "size_bytes": 3289,
@@ -1170,7 +1170,7 @@ const BRANDS_METADATA = [
   {
     "brand": "tesla",
     "name": "Tesla",
-    "file": "Design.md/DESIGN-tesla.md",
+    "file": "designs/DESIGN-tesla.md",
     "category": "Other / Uncategorized",
     "size": "22.0 KB",
     "size_bytes": 22498,
@@ -1185,7 +1185,7 @@ const BRANDS_METADATA = [
   {
     "brand": "theverge",
     "name": "Theverge",
-    "file": "Design.md/DESIGN-theverge.md",
+    "file": "designs/DESIGN-theverge.md",
     "category": "Media, Consumer Tech & Space",
     "size": "28.0 KB",
     "size_bytes": 28707,
@@ -1200,7 +1200,7 @@ const BRANDS_METADATA = [
   {
     "brand": "together.ai",
     "name": "Together.Ai",
-    "file": "Design.md/DESIGN-together.ai.md",
+    "file": "designs/DESIGN-together.ai.md",
     "category": "AI & LLM Platforms",
     "size": "38.1 KB",
     "size_bytes": 38976,
@@ -1215,7 +1215,7 @@ const BRANDS_METADATA = [
   {
     "brand": "totality-festival",
     "name": "Totality Festival",
-    "file": "Design.md/DESIGN-totality-festival.md",
+    "file": "designs/DESIGN-totality-festival.md",
     "category": "Concept & Creative Themes",
     "size": "9.0 KB",
     "size_bytes": 9255,
@@ -1230,7 +1230,7 @@ const BRANDS_METADATA = [
   {
     "brand": "tracks_of_dc",
     "name": "Tracks Of Dc",
-    "file": "Design.md/DESIGN-tracks_of_dc.md",
+    "file": "designs/DESIGN-tracks_of_dc.md",
     "category": "Concept & Creative Themes",
     "size": "6.3 KB",
     "size_bytes": 6450,
@@ -1245,7 +1245,7 @@ const BRANDS_METADATA = [
   {
     "brand": "uber",
     "name": "Uber",
-    "file": "Design.md/DESIGN-uber.md",
+    "file": "designs/DESIGN-uber.md",
     "category": "Media, Consumer Tech & Space",
     "size": "34.6 KB",
     "size_bytes": 35396,
@@ -1260,7 +1260,7 @@ const BRANDS_METADATA = [
   {
     "brand": "vercel",
     "name": "Vercel",
-    "file": "Design.md/DESIGN-vercel.md",
+    "file": "designs/DESIGN-vercel.md",
     "category": "Developer Tools & IDEs",
     "size": "41.2 KB",
     "size_bytes": 42141,
@@ -1275,7 +1275,7 @@ const BRANDS_METADATA = [
   {
     "brand": "vodafone",
     "name": "Vodafone",
-    "file": "Design.md/DESIGN-vodafone.md",
+    "file": "designs/DESIGN-vodafone.md",
     "category": "Media, Consumer Tech & Space",
     "size": "28.0 KB",
     "size_bytes": 28644,
@@ -1290,7 +1290,7 @@ const BRANDS_METADATA = [
   {
     "brand": "voltagent",
     "name": "Voltagent",
-    "file": "Design.md/DESIGN-voltagent.md",
+    "file": "designs/DESIGN-voltagent.md",
     "category": "AI & LLM Platforms",
     "size": "25.8 KB",
     "size_bytes": 26436,
@@ -1305,7 +1305,7 @@ const BRANDS_METADATA = [
   {
     "brand": "warp",
     "name": "Warp",
-    "file": "Design.md/DESIGN-warp.md",
+    "file": "designs/DESIGN-warp.md",
     "category": "Developer Tools & IDEs",
     "size": "24.4 KB",
     "size_bytes": 24964,
@@ -1320,7 +1320,7 @@ const BRANDS_METADATA = [
   {
     "brand": "webflow",
     "name": "Webflow",
-    "file": "Design.md/DESIGN-webflow.md",
+    "file": "designs/DESIGN-webflow.md",
     "category": "Design & Creative Tools",
     "size": "28.1 KB",
     "size_bytes": 28767,
@@ -1335,7 +1335,7 @@ const BRANDS_METADATA = [
   {
     "brand": "wired",
     "name": "Wired",
-    "file": "Design.md/DESIGN-wired.md",
+    "file": "designs/DESIGN-wired.md",
     "category": "Media, Consumer Tech & Space",
     "size": "23.6 KB",
     "size_bytes": 24158,
@@ -1350,7 +1350,7 @@ const BRANDS_METADATA = [
   {
     "brand": "wise",
     "name": "Wise",
-    "file": "Design.md/DESIGN-wise.md",
+    "file": "designs/DESIGN-wise.md",
     "category": "Fintech & Crypto",
     "size": "24.5 KB",
     "size_bytes": 25130,
@@ -1365,7 +1365,7 @@ const BRANDS_METADATA = [
   {
     "brand": "x.ai",
     "name": "X.Ai",
-    "file": "Design.md/DESIGN-x.ai.md",
+    "file": "designs/DESIGN-x.ai.md",
     "category": "AI & LLM Platforms",
     "size": "21.7 KB",
     "size_bytes": 22246,
@@ -1380,7 +1380,7 @@ const BRANDS_METADATA = [
   {
     "brand": "zapier",
     "name": "Zapier",
-    "file": "Design.md/DESIGN-zapier.md",
+    "file": "designs/DESIGN-zapier.md",
     "category": "Productivity & SaaS",
     "size": "23.0 KB",
     "size_bytes": 23532,

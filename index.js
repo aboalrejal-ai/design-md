@@ -155,6 +155,14 @@ function renderBrands() {
                 <button class="btn btn-card-action" onclick="openReader('${brand.brand}')">
                     <span>View Guidelines</span> <i class="fa-solid fa-arrow-right"></i>
                 </button>
+                <div class="card-action-row">
+                    <button class="btn btn-outline btn-sm btn-card-secondary" onclick="copyBrandRaw(event, '${brand.brand}')" title="Copy Markdown">
+                        <i class="fa-solid fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-outline btn-sm btn-card-secondary" onclick="downloadBrandFile(event, '${brand.brand}')" title="Download MD File">
+                        <i class="fa-solid fa-download"></i> Download
+                    </button>
+                </div>
             </div>
         `;
         
@@ -382,15 +390,72 @@ btnDownloadFile.addEventListener('click', () => {
     
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', selectedBrand.file);
+    link.setAttribute('download', selectedBrand.file.split('/').pop());
     link.style.display = 'none';
     
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    showToast(`Downloading ${selectedBrand.file}`);
+    showToast(`Downloading ${selectedBrand.file.split('/').pop()}`);
 });
+
+/* ==========================================================================
+   Card Secondary Action Buttons (Copy / Download)
+   ========================================================================== */
+async function copyBrandRaw(event, brandKey) {
+    event.stopPropagation();
+    const meta = BRANDS_METADATA.find(b => b.brand === brandKey);
+    if (!meta) return;
+    
+    try {
+        const response = await fetch(`./${meta.file}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const text = await response.text();
+        await navigator.clipboard.writeText(text);
+        showToast(`Copied ${meta.name} design markdown!`);
+    } catch (error) {
+        console.error("Failed to copy design file:", error);
+        showToast(`Failed to copy: ${error.message}`);
+    }
+}
+
+async function downloadBrandFile(event, brandKey) {
+    event.stopPropagation();
+    const meta = BRANDS_METADATA.find(b => b.brand === brandKey);
+    if (!meta) return;
+    
+    try {
+        const response = await fetch(`./${meta.file}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const text = await response.text();
+        const blob = new Blob([text], { type: 'text/markdown;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', meta.file.split('/').pop());
+        link.style.display = 'none';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast(`Downloading ${meta.name} file...`);
+    } catch (error) {
+        console.error("Failed to download design file:", error);
+        showToast(`Failed to download: ${error.message}`);
+    }
+}
+
+// Make globally accessible
+window.openReader = openReader;
+window.copyBrandRaw = copyBrandRaw;
+window.downloadBrandFile = downloadBrandFile;
 
 /* ==========================================================================
    Initialization on Load

@@ -5,6 +5,8 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg?style=flat-square)](#contributing)
 [![GitHub Pages](https://img.shields.io/badge/Live-Demo-purple.svg?style=flat-square)](https://aboalrejal-ai.github.io/design-md/)
 
+🔗 **Explore the Interactive Catalog:** [https://aboalrejal-ai.github.io/design-md/](https://aboalrejal-ai.github.io/design-md/)
+
 A comprehensive, curated collection of **93** production-grade `DESIGN.md` files representing the design systems, color tokens, and typography guidelines of top companies and creative concepts worldwide.
 
 Simply copy these markdown files into your AI assistant's context (**Claude Design**, **Cursor**, **Gemini**, or **v0**) to generate pixel-perfect, on-brand user interfaces matching your target brand's exact aesthetic.

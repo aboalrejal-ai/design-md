@@ -1,0 +1,23 @@
+{
+  "eval_id": 1,
+  "eval_name": "eval-1-local-codebase",
+  "prompt": "Analyze the local codebase in the current folder '.' and generate its DESIGN.md file under the current directory.",
+  "assertions": [
+    {
+      "text": "The DESIGN.md file is created successfully in the output directory",
+      "name": "file_created"
+    },
+    {
+      "text": "The DESIGN.md file has standard YAML frontmatter starting with ---",
+      "name": "has_yaml_frontmatter"
+    },
+    {
+      "text": "The output contains custom CSS variables (like --accent-orange, --accent-green, --accent-blue, --anthropic-dark or similar) extracted from the local CSS files",
+      "name": "contains_custom_css_variables"
+    },
+    {
+      "text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)",
+      "name": "contains_required_sections"
+    }
+  ]
+}

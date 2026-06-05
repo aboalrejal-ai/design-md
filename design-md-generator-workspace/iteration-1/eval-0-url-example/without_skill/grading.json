@@ -1,0 +1,49 @@
+{
+  "expectations": [
+    {
+      "text": "The DESIGN.md file is created successfully in the output directory",
+      "passed": true,
+      "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-0-url-example\\without_skill\\outputs\\DESIGN.md (3203 chars)"
+    },
+    {
+      "text": "The DESIGN.md file has standard YAML frontmatter starting with ---",
+      "passed": false,
+      "evidence": "File does not start with YAML delimiter '---'."
+    },
+    {
+      "text": "The output contains colors '#eee' and '#348' extracted from example.com",
+      "passed": true,
+      "evidence": "Checked colors: has '#eee': True, has '#348': True"
+    },
+    {
+      "text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)",
+      "passed": false,
+      "evidence": "Sections present: . Missing: ## Overview, ## Colors, ## Typography, ## Layout, ## Components, ## Responsive Behavior, Do's and Don'ts"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  },
+  "execution_metrics": {
+    "output_chars": 3203,
+    "transcript_chars": 15000
+  },
+  "timing": {
+    "executor_duration_seconds": 120.0,
+    "grader_duration_seconds": 5.0,
+    "total_duration_seconds": 125.0
+  },
+  "claims": [],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Automated grade based on script criteria."
+  }
+}

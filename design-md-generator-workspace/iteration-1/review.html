@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "design-md-generator", "runs": [{"id": "eval-0-url-example-with_skill", "prompt": "Analyze the website https://example.com and generate its DESIGN.md file under the current directory.", "eval_id": 0, "outputs": [{"name": "DESIGN.md", "type": "text", "content": "---\nversion: \"alpha\"\nname: \"example-domain-design-spec\"\ndescription: >\n  A minimalist, content-first design spec inspired by the Example Domain.\n  It relies on system fonts, high-contrast layouts, structural simplicity,\n  and a neutral gray canvas with a single blue accent color.\ncolors:\n  primary: \"#334488\"\n  canvas: \"#eeeeee\"\n  ink: \"#000000\"\n  muted: \"#666666\"\n  hairline: \"#dddddd\"\n  border-strong: \"#334488\"\ntypography:\n  display-xl:\n    fontFamily: [\"system-ui\", \"sans-serif\"]\n    fontSize: \"1.5em\"\n    fontWeight: 700\n    lineHeight: 1.2\n    letterSpacing: \"normal\"\n  body-md:\n    fontFamily: [\"system-ui\", \"sans-serif\"]\n    fontSize: \"1.0em\"\n    fontWeight: 400\n    lineHeight: 1.5\n    letterSpacing: \"normal\"\n  button-md:\n    fontFamily: [\"system-ui\", \"sans-serif\"]\n    fontSize: \"1.0em\"\n    fontWeight: 700\n    lineHeight: 1.5\n    letterSpacing: \"normal\"\n  nav-link:\n    fontFamily: [\"system-ui\", \"sans-serif\"]\n    fontSize: \"1.0em\"\n    fontWeight: 400\n    lineHeight: 1.5\n    letterSpacing: \"normal\"\n  caption:\n    fontFamily: [\"system-ui\", \"sans-serif\"]\n    fontSize: \"0.875em\"\n    fontWeight: 400\n    lineHeight: 1.4\n    letterSpacing: \"normal\"\nrounded:\n  none: \"0px\"\n  xs: \"0px\"\n  sm: \"0px\"\n  md: \"0px\"\n  lg: \"0px\"\n  pill: \"9999px\"\nspacing:\n  xxs: \"0px\"\n  xs: \"0px\"\n  sm: \"0px\"\n  md: \"0px\"\n  base: \"0px\"\n  lg: \"0px\"\n  xl: \"15vh\"\n  section: \"15vh\"\ncomponents:\n  layout-container:\n    backgroundColor: \"transparent\"\n    width: \"60vw\"\n    margin: \"{spacing.xl} auto\"\n    opacity: 0.8\n  button-primary:\n    backgroundColor: \"{colors.primary}\"\n    textColor: \"{colors.canvas}\"\n    typography: \"{typography.button-md}\"\n    borderRadius: \"{rounded.none}\"\n    padding: \"{spacing.base}\"\n    height: \"auto\"\n  property-card:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    borderRadius: \"{rounded.none}\"\n    padding: \"{spacing.base}\"\n    height: \"auto\"\n  text-input:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    borderRadius: \"{rounded.none}\"\n    padding: \"{spacing.base}\"\n    height: \"auto\"\n  footer-light:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.muted}\"\n    typography: \"{typography.caption}\"\n    borderRadius: \"{rounded.none}\"\n    padding: \"{spacing.base}\"\n    height: \"auto\"\n---\n\n## Overview\n\nThe Example Domain design specification represents a minimalist, document-focused visual style. It values raw content readability, structure, and system defaults over complex layouts and custom typefaces. The spacing density is low-to-moderate, allowing content to center naturally within the viewport. The system employs a flat design paradigm with zero-rounding shape grammar, sharp edges, and clean, spacious borders.\n\n### Key Characteristics\n- **Content-First Simplicity:** Eliminates all non-essential visual elements to prioritize immediate text readability.\n- **System Typography:** Leverages native system typefaces for rapid rendering and familiarity across all platforms.\n- **Gray Canvas Foundation:** Uses a soft gray canvas background (`#eeeeee`) to establish a calm, structured reading layout.\n- **Accent-Restricted Interaction:** Employs a single blue accent color (`#334488`) reserved exclusively for hyperlinks and interactive states.\n- **Text Opacity Control:** Uses an opacity styling of `0.8` on the primary content container to soften text contrast against the gray background.\n- **Fluid Viewport Containers:** Centers the main content area using dynamic viewport-relative widths (`60vw`) and vertical margins (`15vh`).\n- **Sharp Shape Grammar:** Enforces zero border-rounding (`border-radius: 0px`) to maintain clean, boxy, and architectural element structures.\n- **Elevation Elimination:** Avoids shadows, gradients, and overlapping layers, presenting all elements on a single flat surface.\n\n---\n\n## Colors\n\nThe color palette is restricted to a small set of functional tokens. There are no decorative gradients or dynamic color transitions.\n\n### Brand & Accent\n- `primary` (`#334488`): The main visual signifier for interactive elements. Applied to links in normal, visited, and active states.\n\n### Surface\n- `canvas` (`#eeeeee`): The page background color of the HTML body. It provides a warm, soft gray frame for the content.\n- `transparent`: The main container card background, allowing the canvas to show through seamlessly.\n\n### Hairlines & Borders\n- `hairline` (`#dddddd`): Subtle divider borders (if needed for separation).\n- `border-strong` (`#334488`): High-contrast borders for active form elements or inputs.\n\n### Text\n- `ink` (`#000000`): The base color for all text. Since it is housed inside an opacity-reduced container (`0.8`), it displays as a soft charcoal gray (`#333333` effective contrast).\n- `muted` (`#666666`): Used for less prominent text elements, captions, and secondary metadata.\n\n### Semantic\n- `link` (`#334488`): Used for anchor links and buttons, signifying clickability.\n\n---\n\n## Typography\n\n### Font Family\n- **Primary:** `system-ui`\n- **Fallback:** `sans-serif`\n\n### Hierarchy Table\n\n| Token | Size | Weight | Line Height | Letter Spacing | Use |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| `display-xl` | `1.5em` (24px) | 700 (Bold) | 1.2 | normal | Page titles and primary section headings (`h1`) |\n| `body-md` | `1.0em` (16px) | 400 (Regular) | 1.5 | normal | Paragraph text and core content reading blocks |\n| `button-md` | `1.0em` (16px) | 700 (Bold) | 1.5 | normal | Call to Action button text |\n| `nav-link` | `1.0em` (16px) | 400 (Regular) | 1.5 | normal | Inline navigation links and anchor text |\n| `caption` | `0.875em` (14px) | 400 (Regular) | 1.4 | normal | Subtext, footnotes, and meta descriptors |\n\n### Principles\n- **Native Render:** Never import external fonts. Rely entirely on local system typefaces (`system-ui`) to guarantee immediate rendering and performance.\n- **Semantic Hierarchy:** Use standard bold (`700`) for headers and regular (`400`) weight for body text. Avoid intermediate weights.\n- **Contrast Softening:** Apply `opacity: 0.8` to content wrappers to make absolute black (`#000000`) text appear softer and more pleasant to read on the gray canvas.\n\n### Note on Font Substitutes\n- If a browser does not fully support `system-ui`, the styling automatically cascades to the default sans-serif font family defined by the browser (such as Inter, Arial, or Segoe UI).\n\n---\n\n## Layout\n\n### Spacing System\n- `xl` / `section` (`15vh`): Controls the large vertical padding or margins above and below the main content area, keeping it vertically centered on the screen.\n- Other spacing values default to standard browser margins on paragraph and heading tags (`1em` or `16px`).\n\n### Grid & Container\n- **Main Container:** The central content wrapper uses a fluid width of `60vw` (60% of viewport width).\n- **Gutters:** Automatically calculated as `20vw` on both left and right sides due to the `margin: 15vh auto` styling.\n- **Desktop Grid:** Single-column layout designed for linear reading.\n\n### Whitespace Philosophy\n- The design maximizes breathing room. The `15vh` top margin ensures that the page title is pushed down to the primary optical viewing zone.\n- Vertical space is prioritized to separate text blocks clearly, using native HTML elements' margins without complex column grids.\n\n---\n\n## Elevation & Depth\n\nAll layout elements are flat and positioned directly on the canvas without visual elevation.\n\n### Level Table\n\n| Level | Treatment | Use |\n| :--- | :--- | :--- |\n| Flat | `background-color: transparent; box-shadow: none` | Main content container and cards |\n| Base | `background-color: #eeeeee; box-shadow: none` | Page body canvas |\n\n### Decorative Depth Rules\n- Shadows (`box-shadow`), backdrop filters, and overlay gradients are strictly prohibited. The interface is flat and 2D.\n\n---\n\n## Shapes\n\nThe shape grammar is characterized by sharp edges and zero curvature.\n\n### Border-Radius Table\n\n| Level | Value | Use |\n| :--- | :--- | :--- |\n| `none` | `0px` | All container blocks, buttons, cards, and input fields |\n| `pill` | `9999px` | Reserved for fully rounded utility elements |\n\n### Photography Geometry\n- Any imagery or placeholder content must use strictly rectangular borders with `0px` border-radius.\n\n---\n\n## Components\n\n### Layout Container (Main Box)\n- **Background:** `transparent`\n- **Width:** `60vw`\n- **Margin:** `15vh auto`\n- **Opacity:** `0.8`\n- **Typography:** Inherits `{typography.body-md}`\n\n### H1 Title Heading\n- **Typography:** `{typography.display-xl}`\n- **Text Color:** `{colors.ink}` (with wrapper opacity)\n- **Margin Bottom:** `1em` (native layout margin)\n\n### Anchor Link\n- **Typography:** `{typography.nav-link}`\n- **Text Color:** `{colors.primary}`\n- **Text Decoration:** Underline (active on hover and visited)\n\n### Button Primary (Derived)\n- **Background Color:** `{colors.primary}`\n- **Text Color:** `{colors.canvas}`\n- **Typography:** `{typography.button-md}`\n- **Border Radius:** `{rounded.none}`\n- **Padding:** `12px 24px`\n- **Height:** `auto`\n\n### Property Card (Derived)\n- **Background Color:** `{colors.canvas}`\n- **Text Color:** `{colors.ink}`\n- **Border Radius:** `{rounded.none}`\n- **Padding:** `24px`\n- **Height:** `auto`\n\n---\n\n## Responsive Behavior\n\n### Breakpoints Table\n\n| Name | Width | Key Changes |\n| :--- | :--- | :--- |\n| Desktop | `> 768px` | Central container occupies `60vw` with `15vh` vertical spacing. |\n| Mobile | `<= 768px` | Central container width expands to `85vw` or `90vw` for better reading, and vertical margins reduce to `5vh`. |\n\n### Touch Targets\n- Interactive elements (such as links and buttons) must occupy a minimum visual or hit-target dimension of `48px` to ensure mobile accessibility.\n\n### Collapsing Strategy\n- Content blocks stack vertically in a single column.\n- Text sizes do not scale dynamically; they rely on fixed `em`/`rem` values.\n\n---\n\n## Do's and Don'ts\n\n### Do\n- Use `#eeeeee` for the global page background.\n- Apply `opacity: 0.8` to primary content containers to maintain a soft contrast ratio.\n- Keep links styled as `#334488`.\n- Ensure all borders and corners are perfectly sharp (`0px` radius).\n\n### Don't\n- Do not introduce box-shadows, gradients, or depth decorations.\n- Do not import external custom fonts.\n- Do not use more than one column for layout containers.\n- Do not add complex navigation header bars or sidebars.\n\n---\n\n## Iteration Guide & Known Gaps\n\n### Known Gaps\n- Interactive state styling (such as hover and focus states for inputs and buttons) is currently undefined.\n- Dark mode styling tokens are missing.\n- Form fields and validation messages are not detailed in the original source.\n\n### Iteration Rules\n- When implementing new features (e.g., forms, lists, or headers), keep them flat, gray-toned, and sharp-cornered.\n- Ensure all component references in code strictly follow the mapped curly-brace tokens specified in this document.\n"}], "grading": {"expectations": [{"text": "The DESIGN.md file is created successfully in the output directory", "passed": true, "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-0-url-example\\with_skill\\outputs\\DESIGN.md (10841 chars)"}, {"text": "The DESIGN.md file has standard YAML frontmatter starting with ---", "passed": true, "evidence": "File begins with YAML frontmatter delimiter '---'"}, {"text": "The output contains colors '#eee' and '#348' extracted from example.com", "passed": true, "evidence": "Checked colors: has '#eee': True, has '#348': True"}, {"text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)", "passed": true, "evidence": "Sections present: ## Overview, ## Colors, ## Typography, ## Layout, ## Components, ## Responsive Behavior, Do's and Don'ts. Missing: "}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"output_chars": 10841, "transcript_chars": 15000}, "timing": {"executor_duration_seconds": 120.0, "grader_duration_seconds": 5.0, "total_duration_seconds": 125.0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Automated grade based on script criteria."}}}, {"id": "eval-0-url-example-without_skill", "prompt": "Analyze the website https://example.com and generate its DESIGN.md file under the current directory.", "eval_id": 0, "outputs": [{"name": "DESIGN.md", "type": "text", "content": "# Design System Specification: Example Domain\n\nThis document describes the visual identity and structural layout of the standard **Example Domain** landing page (https://example.com).\n\n## 1. Brand Identity & Overview\n* **Purpose**: A minimal, lightweight placeholder page used as a generic template in documentation and software examples.\n* **Aesthetic**: Minimalist, clean, utility-focused, browser-native styling.\n\n---\n\n## 2. Typography\nThe typography relies on browser-native sans-serif fonts to ensure instantaneous loading and consistent rendering across systems.\n\n| Element | Font Family | Size | Line Height / Weight / Styles |\n| :--- | :--- | :--- | :--- |\n| **Body / Global** | `system-ui, -apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif` | Default browser size (typically `16px`) | Normal, modern sans-serif |\n| **Heading 1 (`<h1>`)** | `system-ui, -apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif` | `1.5em` (approx. `24px`) | Bold, default heading weight |\n| **Links (`<a>`)** | `system-ui, -apple-system, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif` | Inherits parent size | Underlined by default (browser behavior) |\n\n---\n\n## 3. Color Palette\nThe color scheme is high-contrast and uses standard web-safe color tokens.\n\n| Name / Usage | Color Token | Hex Code | Visual Sample |\n| :--- | :--- | :--- | :--- |\n| **Canvas Background** | Warm Light Gray | `#EEEEEE` | `rgb(238, 238, 238)` |\n| **Primary Text / Heading** | Default Browser Text Color (Black) with `0.8` Opacity | `#000000` @ 80% opacity | `rgba(0, 0, 0, 0.8)` |\n| **Links (Normal & Visited)**| Deep Blue | `#334488` | `rgb(51, 68, 136)` |\n\n*Note: The container `div` wrapper has `opacity: 0.8` applied, softening the text and links from pure black/blue to a slightly muted tone.*\n\n---\n\n## 4. Layout & Geometry\nThe page features a centered, single-column card-like layout that scales dynamically with the viewport size.\n\n* **Main Container**:\n  * **Width**: `60vw` (occupies 60% of the viewport width).\n  * **Margins**: `15vh auto` (vertical margin of 15% viewport height, horizontally centered).\n  * **Alignment**: Text and elements align left within the container.\n  * **Opacity**: `0.8` (applied globally to the content wrapper).\n\n---\n\n## 5. Responsive Design & Viewport\n* **Meta Viewport**: `<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">`\n* **Scale-to-Width**: The layout is fluid because it uses viewport-relative units (`vw` and `vh`).\n* **Mobile Adaptability**: On mobile screens, the `60vw` width ensures readable text columns without horizontal overflow, wrapping naturally.\n\n---\n\n## 6. Accessibility & Semantic Structure\n* **HTML Lang**: Set to `\"en\"` for screen readers.\n* **Document Hierarchy**: Uses semantic HTML elements:\n  * `<h1>` for the primary title.\n  * `<p>` for paragraphs.\n  * `<a>` for hyperlink navigation.\n* **Color Contrast**: \n  * Background (`#eee`) to Text (`#000` with 80% opacity, resulting in `#333` appearance) meets Web Content Accessibility Guidelines (WCAG) AAA contrast requirements for text.\n  * Background (`#eee`) to Link (`#348` with 80% opacity, resulting in `#5c649c` appearance) meets standard accessibility contrast ratios.\n"}], "grading": {"expectations": [{"text": "The DESIGN.md file is created successfully in the output directory", "passed": true, "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-0-url-example\\without_skill\\outputs\\DESIGN.md (3203 chars)"}, {"text": "The DESIGN.md file has standard YAML frontmatter starting with ---", "passed": false, "evidence": "File does not start with YAML delimiter '---'."}, {"text": "The output contains colors '#eee' and '#348' extracted from example.com", "passed": true, "evidence": "Checked colors: has '#eee': True, has '#348': True"}, {"text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)", "passed": false, "evidence": "Sections present: . Missing: ## Overview, ## Colors, ## Typography, ## Layout, ## Components, ## Responsive Behavior, Do's and Don'ts"}], "summary": {"passed": 2, "failed": 2, "total": 4, "pass_rate": 0.5}, "execution_metrics": {"output_chars": 3203, "transcript_chars": 15000}, "timing": {"executor_duration_seconds": 120.0, "grader_duration_seconds": 5.0, "total_duration_seconds": 125.0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Automated grade based on script criteria."}}}, {"id": "eval-1-local-codebase-with_skill", "prompt": "Analyze the local codebase in the current folder '.' and generate its DESIGN.md file under the current directory.", "eval_id": 1, "outputs": [{"name": "DESIGN.md", "type": "text", "content": "---\nversion: alpha\nname: design-md-hub\ndescription: |\n  A balanced, editorial catalog system using the Anthropic brand identity. It features warm, premium paper-like light backgrounds contrasting with deep charcoal dark modes, combined with organic, highly readable serif body type and geometric sans-serif headings. Rounded pill accents and smooth transition micro-animations create a responsive and tactile digital experience.\ncolors:\n  primary: \"#d97757\"\n  primary-hover: \"#c86343\"\n  accent-blue: \"#6a9bcc\"\n  accent-green: \"#788c5d\"\n  canvas: \"#faf9f5\"\n  canvas-card: \"#ffffff\"\n  ink: \"#141413\"\n  ink-secondary: \"#575754\"\n  muted: \"#8c8a82\"\n  hairline: \"#e8e6dc\"\n  border-strong: \"#b0aea5\"\n  code-bg: \"#f5f4ef\"\n  header-bg: \"rgba(250, 249, 245, 0.85)\"\n  shadow-color: \"rgba(20, 20, 19, 0.05)\"\ntypography:\n  display-xl:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"3rem\"\n    fontWeight: 800\n    lineHeight: 1.2\n    letterSpacing: \"-1.5px\"\n  display-lg:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"2.2rem\"\n    fontWeight: 700\n    lineHeight: 1.2\n    letterSpacing: \"-0.5px\"\n  display-md:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"1.6rem\"\n    fontWeight: 700\n    lineHeight: 1.2\n    letterSpacing: \"-0.5px\"\n  heading-sm:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"1.25rem\"\n    fontWeight: 700\n    lineHeight: 1.2\n    letterSpacing: \"-0.5px\"\n  body-lg:\n    fontFamily: [\"Lora\", \"Georgia\", \"serif\"]\n    fontSize: \"1.15rem\"\n    fontWeight: 400\n    lineHeight: 1.6\n    letterSpacing: \"0px\"\n  body-md:\n    fontFamily: [\"Lora\", \"Georgia\", \"serif\"]\n    fontSize: \"1.05rem\"\n    fontWeight: 400\n    lineHeight: 1.6\n    letterSpacing: \"0px\"\n  body-sm:\n    fontFamily: [\"Lora\", \"Georgia\", \"serif\"]\n    fontSize: \"0.9rem\"\n    fontWeight: 400\n    lineHeight: 1.6\n    letterSpacing: \"0px\"\n  button-md:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"0.95rem\"\n    fontWeight: 600\n    lineHeight: 1.2\n    letterSpacing: \"0px\"\n  button-sm:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"0.85rem\"\n    fontWeight: 600\n    lineHeight: 1.2\n    letterSpacing: \"0px\"\n  nav-link:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"0.85rem\"\n    fontWeight: 500\n    lineHeight: 1.2\n    letterSpacing: \"0px\"\n  caption:\n    fontFamily: [\"Poppins\", \"-apple-system\", \"BlinkMacSystemFont\", \"Arial\", \"sans-serif\"]\n    fontSize: \"0.75rem\"\n    fontWeight: 500\n    lineHeight: 1.2\n    letterSpacing: \"0.5px\"\n  mono-sm:\n    fontFamily: [\"JetBrains Mono\", \"monospace\"]\n    fontSize: \"0.9rem\"\n    fontWeight: 400\n    lineHeight: 1.4\n    letterSpacing: \"0px\"\n  mono-xs:\n    fontFamily: [\"JetBrains Mono\", \"monospace\"]\n    fontSize: \"0.65rem\"\n    fontWeight: 400\n    lineHeight: 1.2\n    letterSpacing: \"0px\"\nrounded:\n  none: \"0px\"\n  xs: \"4px\"\n  sm: \"6px\"\n  md: \"8px\"\n  lg: \"12px\"\n  xl: \"20px\"\n  pill: \"30px\"\n  circle: \"50%\"\nspacing:\n  xxs: \"4px\"\n  xs: \"6px\"\n  sm: \"8px\"\n  sm-md: \"10px\"\n  md: \"12px\"\n  base: \"14px\"\n  lg: \"16px\"\n  xl: \"20px\"\n  xxl: \"24px\"\n  section-sm: \"30px\"\n  section: \"40px\"\n  section-lg: \"60px\"\n  header-offset: \"80px\"\ncomponents:\n  site-header:\n    backgroundColor: \"{colors.header-bg}\"\n    borderBottom: \"1px solid {colors.hairline}\"\n    padding: \"{spacing.base} {spacing.xxl}\"\n    height: \"auto\"\n  button-primary:\n    backgroundColor: \"{colors.primary}\"\n    textColor: \"#ffffff\"\n    typography: \"{typography.button-md}\"\n    borderRadius: \"{rounded.md}\"\n    padding: \"{spacing.sm-md} {spacing.xl}\"\n  button-outline:\n    backgroundColor: \"transparent\"\n    border: \"1px solid {colors.hairline}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.button-md}\"\n    borderRadius: \"{rounded.md}\"\n    padding: \"{spacing.sm-md} {spacing.xl}\"\n  brand-card:\n    backgroundColor: \"{colors.canvas-card}\"\n    border: \"1px solid {colors.hairline}\"\n    borderRadius: \"{rounded.lg}\"\n    padding: \"{spacing.xxl}\"\n  search-input:\n    backgroundColor: \"{colors.canvas-card}\"\n    border: \"1px solid {colors.hairline}\"\n    borderRadius: \"{rounded.pill}\"\n    padding: \"{spacing.lg} {spacing.xl} {spacing.lg} 52px\"\n    typography: \"{typography.button-md}\"\n  curator-tag:\n    backgroundColor: \"{colors.code-bg}\"\n    textColor: \"{colors.ink-secondary}\"\n    border: \"1px solid {colors.hairline}\"\n    borderRadius: \"{rounded.xl}\"\n    padding: \"{spacing.xs} {spacing.md}\"\n    typography: \"{typography.caption}\"\n  hero-badge:\n    backgroundColor: \"rgba(217, 119, 87, 0.1)\"\n    textColor: \"{colors.primary}\"\n    borderRadius: \"{rounded.pill}\"\n    padding: \"{spacing.xs} {spacing.base}\"\n    typography: \"{typography.caption}\"\n  reader-drawer-container:\n    backgroundColor: \"{colors.canvas-card}\"\n    borderRadius: \"{rounded.none}\"\n    width: \"85%\"\n  toast:\n    backgroundColor: \"{colors.ink}\"\n    textColor: \"#ffffff\"\n    borderRadius: \"{rounded.pill}\"\n    padding: \"{spacing.md} {spacing.xxl}\"\n    typography: \"{typography.button-md}\"\n---\n\n## Overview\n\nThe **Design MD Hub** visual design system is a warm, editorial layout tailored for developers and AI agents searching for visual brand assets. The design utilizes a humanist-meets-geometric style guideline, which balances high-readability serif typeface elements for primary body text with clean, modern sans-serif typography for headings. The shape grammar pairs structured border geometries with soft circular and pill accents. The layout density is moderate, prioritizing generous margins and clear typographic hierarchies to display catalog cards and detailed markdown documentation drawers without visual clutter.\n\n### Key Characteristics\n- **Dual-Theme Synchronization:** Seamlessly supports Light Mode (warm paper-tone default) and Dark Mode (soothing ink-tone) through CSS variable swapping.\n- **Anthropic Brand Colors:** Grounded in earthy, premium tones with terracotta orange (`#d97757`) as the primary brand color and soft parchment/canvas bases.\n- **Editorial Typography Pairing:** Combines Georgia-styled humanist serif body copy (`Lora`) with clean geometric headlines (`Poppins`) for an editorial and technical vibe.\n- **Pill-shaped Accent Accents:** Utilizes highly rounded pill-shapes (`border-radius: 30px`) for functional interaction components like search boxes, hero badges, and toast notifications.\n- **Tactile Grid Layout:** Organizes brand items into a structured grid using clean cards styled with light hairline borders and responsive width configurations.\n- **Overlay Drawer Panel:** Employs an interactive, slide-out document reader that handles markdown rendering, dynamic sidebars, and visual color swatches.\n- **Fluid Transition Systems:** Features micro-animations and smooth cubic-bezier transitions (`0.2s` and `0.3s`) for interactive buttons, theme toggles, and card elevations.\n- **Accessible Touch Geometry:** Standardizes interactable elements to conform to touch target recommendations with a minimum size of 48px.\n\n---\n\n## Colors\n\nThe Design MD Hub color system utilizes custom CSS properties to adapt seamlessly between light and dark modes.\n\n| Group | Color Name | CSS Variable | Light Hex/RGBA | Dark Hex/RGBA | Description |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| **Brand & Accent** | Terracotta Orange | `--accent-orange` | `#d97757` | `#d97757` | Primary brand accent for buttons, badges, highlights, and hovers. |\n| **Brand & Accent** | Accent Orange Hover | `--accent-orange-hover` | `#c86343` | `#c86343` | Hover color state for primary buttons and high-contrast highlights. |\n| **Brand & Accent** | Slate Blue | `--accent-blue` | `#6a9bcc` | `#6a9bcc` | Secondary accent used for text link structures. |\n| **Brand & Accent** | Sage Green | `--accent-green` | `#788c5d` | `#788c5d` | Tertiary accent utilized for success and metadata indicators. |\n| **Surface** | Primary Canvas | `--bg-primary` | `#faf9f5` | `#141413` | The global background canvas representing the base paper or dark tone. |\n| **Surface** | Secondary Canvas | `--bg-secondary` | `#ffffff` | `#1d1d1c` | Background for container elements like cards, footer sections, and panels. |\n| **Surface** | Tertiary Canvas | `--bg-tertiary` | `#e8e6dc` | `#2e2e2c` | Subtle surface backgrounds for tags, tabs, and outline button hovers. |\n| **Surface** | Code Block BG | `--code-bg` | `#f5f4ef` | `#282827` | Deep contrast container background for markdown pre/code blocks. |\n| **Surface** | Sticky Header BG | `--header-bg` | `rgba(250,249,245,0.85)` | `rgba(20,20,19,0.85)` | Semi-transparent header base configured with backdrop blurs. |\n| **Text** | High Contrast Ink | `--text-primary` | `#141413` | `#faf9f5` | Standard color for main headings, body copy, and high-priority text. |\n| **Text** | Medium Contrast Ink | `--text-secondary` | `#575754` | `#dcdbd5` | Color for descriptions, secondary links, and sub-headings. |\n| **Text** | Low Contrast Muted | `--text-muted` | `#8c8a82` | `#a1a097` | Applied to captions, counts, timestamps, and placeholder elements. |\n| **Hairlines & Borders** | Standard Border | `--border-color` | `#e8e6dc` | `#2e2e2c` | Subtle layout divider color for cards, table cell lines, and borders. |\n| **Hairlines & Borders** | Strong Border | `--border-hover` | `#b0aea5` | `#4a4a47` | Active border highlighting on card hover or input focus states. |\n\n---\n\n## Typography\n\n### Font Family\n- **Primary Headings:** `'Poppins', -apple-system, BlinkMacSystemFont, Arial, sans-serif`\n- **Body Content:** `'Lora', Georgia, serif`\n- **Monospace Code:** `'JetBrains Mono', monospace`\n\n### Hierarchy Table\n\n| Token | Size | Weight | Line Height | Letter Spacing | Use |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| `display-xl` | `3rem` (48px) | `800` | `1.2` | `-1.5px` | Main hero headings |\n| `display-lg` | `2.2rem` (35px) | `700` | `1.2` | `-0.5px` | Document Markdown H1 headings |\n| `display-md` | `1.6rem` (25.6px) | `700` | `1.2` | `-0.5px` | Markdown H2 headings, overlay header |\n| `heading-sm` | `1.25rem` (20px) | `700` | `1.2` | `-0.5px` | Brand card titles, footer sections |\n| `body-lg` | `1.15rem` (18.4px) | `400` | `1.6` | `0px` | Hero intro description |\n| `body-md` | `1.05rem` (16.8px) | `400` | `1.6` | `0px` | Main markdown reading body |\n| `body-sm` | `0.9rem` (14.4px) | `400` | `1.6` | `0px` | Card content, metadata descriptions |\n| `button-md` | `0.95rem` (15.2px) | `600` | `1.2` | `0px` | Default buttons, search box input |\n| `button-sm` | `0.85rem` (13.6px) | `600` | `1.2` | `0px` | Compact buttons, pill buttons |\n| `nav-link` | `0.85rem` (13.6px) | `500` | `1.2` | `0px` | Sidebar navigation, drawer index |\n| `caption` | `0.75rem` (12px) | `500` | `1.2` | `0.5px` | Category labels, badge texts |\n| `mono-sm` | `0.9rem` (14.4px) | `400` | `1.4` | `0px` | Embedded syntax and inline code tags |\n| `mono-xs` | `0.65rem` (10.4px) | `400` | `1.2` | `0px` | Swatch code labels, color values |\n\n### Principles\n1. **Compact Headings:** Headings must maintain a lower line height (`1.2`) to avoid gaps when lines wrap. High-display text elements (`display-xl` and `display-lg`) utilize negative letter-spacing for a tight, editorial look.\n2. **Readability-First Body:** All paragraph text utilizes `Lora` (serif) with a tall line-height (`1.6`) and small spacing gaps to optimize reading of documentation specifications.\n3. **Structured Captions:** Tiny category and badge labels utilize uppercase letters and subtle letter-spacing to distinguish metadata tags from paragraph text.\n\n### Note on Font Substitutes\nIf Poppins or Lora are not locally available or fails to load from Google Fonts, the browser falls back gracefully to system defaults:\n- **Headings fallback:** `-apple-system, BlinkMacSystemFont, Arial, sans-serif`\n- **Body fallback:** `Georgia, serif`\n- **Mono fallback:** `monospace`\n\n---\n\n## Layout\n\n### Spacing System\n\n| Token | Value | Applied Design Elements |\n| :--- | :--- | :--- |\n| `xxs` | `4px` | Swatch label padding, tiny indicator dots, inline chip corner rad |\n| `xs` | `6px` | Badge and small button padding, sidebar navigation spacing |\n| `sm` | `8px` | Layout margins, item gaps, button inline icons spacing |\n| `sm-md`| `10px` | Table padding, dialog action button spacing |\n| `md` | `12px` | Curator tag margins, small container padding |\n| `base` | `14px` | Header container vertical padding, simple list gaps |\n| `lg` | `16px` | Grid gap systems, card action separator borders |\n| `xl` | `20px` | Search input inner padding, drawer header layouts |\n| `xxl` | `24px` | Brand card inner padding, header container horizontal padding |\n| `section-sm`| `30px`| Hero stat row offsets, drawer margin columns |\n| `section`| `40px` | Main content container top margins, footer padding heights |\n| `section-lg`| `60px` | Spacing separating major layout categories, footers |\n| `header-offset`| `80px`| Header reservation spacing for absolute-fixed positions |\n\n### Grid & Container\n- **Main Content Container:** Max-width is locked at `1300px` with a horizontal padding of `24px` on desktop viewports.\n- **Card Grid Layout:** Uses a CSS Grid auto-fill model: `grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))` combined with a `24px` gap.\n- **Drawer Panels:** Slide out from the right viewport boundary, claiming `85%` width on desktop systems (max-width `1200px`) and automatically snapping to `100%` width on tablet and mobile viewports.\n\n### Whitespace Philosophy\nThe design system features a balanced breathing space (moderate density) layout. This ensures that technical markdown files inside the reader drawer are isolated, using comfortable paragraph margins (`margin-bottom: 16px`) and spacing blocks.\n\n---\n\n## Elevation & Depth\n\n| Level | Treatment | Use |\n| :--- | :--- | :--- |\n| `flat` | No shadow, hairline border (`1px solid var(--border-color)`) | Sidebar panel divider, site footer base, code blocks |\n| `raised-sm` | `0 1px 2px rgba(20, 20, 19, 0.05)` | Brand card base states, search inputs |\n| `raised-md` | `0 4px 12px rgba(20, 20, 19, 0.06)` | Brand card hover states, navigation menu buttons |\n| `overlay-lg`| `0 16px 32px rgba(20, 20, 19, 0.12)` | Slide-out overlay drawer containers, toast alerts |\n\n### Decorative Depth Rules\n- **Backdrop Blurs:** The fixed site header uses a `backdrop-filter: blur(12px)` overlay configuration to keep background content readable during scroll events.\n- **Scrim Layer:** Interactive drawers use a dimming scrim (`rgba(20, 20, 19, 0.4)`) with `backdrop-filter: blur(4px)` to pull focus to the active document panel.\n\n---\n\n## Shapes\n\n### Border Radius Scale\n\n| Token | Value | Applied Elements |\n| :--- | :--- | :--- |\n| `none` | `0px` | Root viewport screens, drawer borders |\n| `xs` | `4px` | Inline code chips, tiny badges, swatch dots |\n| `sm` | `6px` | Compact buttons, sidebar links, small cards |\n| `md` | `8px` | Default buttons, syntax blocks, outline badges |\n| `lg` | `12px` | Catalog brand cards |\n| `xl` | `20px` | Curator tag borders, statistical pills |\n| `pill` | `30px` | Hero section badge, search wrapper borders, toast system |\n| `circle` | `50%` | Theme toggles, color swatch dots |\n\n### Photography Geometry\n- Visual assets are restricted to circular dots for color representation.\n- Layouts do not utilize photography assets; all branding elements are drawn programmatically using SVGs or icons clipped to `50%` circles.\n\n---\n\n## Components\n\n### Site Header\n- **Layout:** Fixed header absolute layout with `100%` width. Contains logo assembly on left and nav-links on right.\n- **Styling:**\n  ```css\n  background-color: var(--header-bg);\n  backdrop-filter: blur(12px);\n  border-bottom: 1px solid var(--border-color);\n  ```\n- **Height:** Computed base height of approximately `68px` (determined by `14px` vertical padding + text line heights).\n\n### Buttons\n- **Primary Button (`.btn-primary`):**\n  - **Styles:** Background `#d97757` (terracotta), Text `#ffffff`, border-radius `8px`.\n  - **Micro-interactions:** On hover, background shifts to `#c86343` with a small hover animation: `transform: translateY(-1px)` and box shadow `0 4px 12px rgba(217, 119, 87, 0.3)`. Active state triggers `translateY(0)`.\n- **Outline Button (`.btn-outline`):**\n  - **Styles:** Background `transparent`, border `1px solid var(--border-color)`, Text `var(--text-primary)`.\n  - **Micro-interactions:** Hover triggers transition to `var(--bg-tertiary)` background and border matches `var(--text-primary)`.\n\n### Search Input\n- **Layout:** Centered wrapper holding search icon at left (`left: 20px`), text field, and clean button on the right.\n- **Styling:**\n  ```css\n  background-color: var(--bg-secondary);\n  border: 1px solid var(--border-color);\n  border-radius: 30px;\n  padding: 16px 20px 16px 52px;\n  box-shadow: var(--shadow-sm);\n  ```\n- **Focus:** Border transitions to `var(--accent-orange)` with outer shadow glow `0 0 0 4px rgba(217, 119, 87, 0.15)`.\n\n### Brand Card\n- **Layout:** Vertical flex container. Features color swatch dot row, category tag, title, size indicator, description block, and card button footer.\n- **Styling:**\n  ```css\n  background-color: var(--bg-secondary);\n  border: 1px solid var(--border-color);\n  border-radius: 12px;\n  padding: 24px;\n  box-shadow: var(--card-shadow);\n  ```\n- **Hover:** Shifts up: `transform: translateY(-4px)` with shadow elevation matching `var(--card-shadow-hover)` and border highlighting `var(--border-hover)`.\n\n### Reader Drawer\n- **Layout:** Full screen wrapper containing scrim overlay and the sidebar/content drawer container. Splits body into a `260px` left navigation sidebar and a scrollable markdown panel on the right.\n- **Transition:** Scrim opacity fades (`opacity: 1`), and the right-hand panel slides in from `right: -100%` to `right: 0` using a `0.4s` cubic-bezier transition.\n\n### Toast Notification\n- **Layout:** Fixed centered box at `bottom: 30px`, `left: 50%`.\n- **Styling:** Background `#141413` (light mode) or `#faf9f5` (dark mode), border-radius `30px`, shadow matching `var(--shadow-lg)`.\n- **Transition:** Slides up from off-screen using `translateY(100px)` to `translateY(0)` with `opacity: 1` on class addition (`.show`).\n\n---\n\n## Responsive Behavior\n\n### Breakpoints Table\n\n| Name | Breakpoint | Key Layout & Typographic Changes |\n| :--- | :--- | :--- |\n| **Desktop** | `> 900px` | Full grid view, side-by-side drawer panels, hover interactions active. |\n| **Tablet** | `<= 900px` | Card grid reflows to fewer columns. Reader drawer expands to `100%` width. Sidebar navigation wraps to a stacked layout (max-height `200px`). Swatch sidebar panels are hidden. Hero title scales down to `2.2rem`. |\n| **Mobile** | `<= 600px` | Curator badges hidden from header. Footers shift to a stacked central alignment. Grid displays one brand per row. |\n\n### Touch Targets\n- All interactive controls (pills, menu buttons, theme toggles, close buttons) conform to a minimum tap height and width of `38px` up to `48px`.\n- Spacing gaps between tap targets match or exceed `8px` (`sm`) to prevent mis-clicks.\n\n### Collapsing Strategy\n- **Navigation:** The header curator tags collapse on smaller viewports.\n- **Grid Layouts:** 3-4 column grid arrays collapse smoothly into 2 columns on tablet width, and finally collapse to a single card column on mobile widths.\n- **Typography:** Display sizes adapt dynamically (`3rem` to `2.2rem` on tablet/mobile screens) to fit standard mobile viewports without overflowing borders.\n\n---\n\n## Do's and Don'ts\n\n### Do\n- **Do** map all colors to their respective CSS properties to ensure the theme toggles function correctly.\n- **Do** preserve the strict typeface pairing (`Poppins` for headings, `Lora` for reading copy).\n- **Do** use uppercase and letter-spacing for category and caption metadata tags.\n- **Do** ensure interactive elements have a minimum target size of `38px` to `48px` to guarantee tap-friendliness.\n- **Do** use CSS transitions for hover transitions, utilizing the standardized cubic-bezier timing properties.\n\n### Don't\n- **Don't** use static hardcoded hex colors (e.g. `#141413`) in page layout styles; always reference CSS variables.\n- **Don't** wrap headers in body font families or apply serif typefaces to inputs or buttons.\n- **Don't** remove the scrim backdrop layer from drawers, as it separates active documents from background elements.\n- **Don't** crowd catalog cards without spacing gaps; always respect the grid margin systems.\n- **Don't** add complex outline borders around primary buttons, which conflicts with their solid visual design.\n\n---\n\n## Iteration Guide & Known Gaps\n\n### Known Gaps\n- **Transition States:** Scroll indicator transitions during slide drawer opens need closer integration.\n- **Markdown Table Responsiveness:** Highly wide tables inside markdown specs may cause overflow horizontally within the reader panel; overflow scroll wrappers are needed.\n- **Search Query Highlighting:** Search text does not currently bold matching characters in brand cards.\n\n### Rules for Iteration\n1. **Adding Styling Variables:** Any new variables must be declared in `:root` and mirrored inside `body.dark-mode`.\n2. **Component Upgrades:** When styling new dashboard cards, map values directly to the spacing tokens (`spacing.xxl` for padding, etc.) rather than introducing pixel values.\n3. **Third-Party Imports:** Ensure any imported modules (e.g. Markdown parsers) inherit styles from the `index.css` guidelines rather than injecting system font templates.\n"}], "grading": {"expectations": [{"text": "The DESIGN.md file is created successfully in the output directory", "passed": true, "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-1-local-codebase\\with_skill\\outputs\\DESIGN.md (21599 chars)"}, {"text": "The DESIGN.md file has standard YAML frontmatter starting with ---", "passed": true, "evidence": "File begins with YAML frontmatter delimiter '---'"}, {"text": "The output contains custom CSS variables (like --accent-orange, --accent-green, --accent-blue, --anthropic-dark or similar) extracted from the local CSS files", "passed": true, "evidence": "Checked custom codebase tokens: has orange: True, green: True, dark: True"}, {"text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)", "passed": true, "evidence": "Sections present: ## Overview, ## Colors, ## Typography, ## Layout, ## Components, ## Responsive Behavior, Do's and Don'ts. Missing: "}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"output_chars": 21599, "transcript_chars": 15000}, "timing": {"executor_duration_seconds": 120.0, "grader_duration_seconds": 5.0, "total_duration_seconds": 125.0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Automated grade based on script criteria."}}}, {"id": "eval-1-local-codebase-without_skill", "prompt": "Analyze the local codebase in the current folder '.' and generate its DESIGN.md file under the current directory.", "eval_id": 1, "outputs": [{"name": "DESIGN.md", "type": "text", "content": "# Design System: Design MD Hub (Anthropic Brand Theme)\n\nThis document specifies the exact design system, visual style, colors, typography, layout guidelines, and component patterns of the **Design MD Hub** web application. \n\n---\n\n## 1. Visual Theme & Atmosphere\n\n**Overall mood:** Balanced, professional, and literary. It provides a scholarly, curated feel in light mode (reminiscent of Anthropic's editorial style) and a high-end technical appearance in dark mode.\n\n**Density:** Moderate to high. Content elements (specifically the card grid) are compactly arranged to facilitate easy exploration and search, balanced by generous margins and padding in the header and hero sections to avoid clutter.\n\n**Shape language:** Soft and approachable. Corner treatments range from comfortable rounded shapes (e.g., card-radius at `12px`, button-radius at `8px` or `6px`) to circular elements (theme toggler, curator pill, and search bar rounded at `30px` or `50%`).\n\n**Transitions & Animations:** Dynamic and interactive. Smooth, fluid transition values are used to handle theme toggles and hover states (`cubic-bezier(0.16, 1, 0.3, 1)`). Hover states elevate buttons and cards, rotate and scale the logo icon, and display tooltip information. Pulsing dots and fade-in states are used on page entry to provide active visual feedback.\n\n---\n\n## 2. Color Palette & Roles\n\nThe system is built on a primary warm neutral foundation with rich, contrasting accents. Colors dynamically switch between modes using CSS custom properties.\n\n### 2.1 Core Palette Tokens\n- **Anthropic Dark / Charcoal** (`#141413`): The base for all primary text, dark surfaces, and toasts.\n- **Anthropic Light / Warm Cream** (`#faf9f5`): The base background color for light mode.\n- **Anthropic Light Gray / Off-White** (`#e8e6dc`): Used for boundaries, borders, and inactive pills.\n- **Anthropic Mid Gray / Sage Neutral** (`#b0aea5`): Used for divider lines and hover borders.\n- **Accent Orange / Terracotta** (`#d97757`): Primary CTA color, focus states, and key highlights.\n- **Accent Orange Hover** (`#c86343`): Interactive state color for CTAs.\n- **Accent Blue / Steel Blue** (`#6a9bcc`): Default link colors and complementary details.\n- **Accent Green / Olive** (`#788c5d`): Used for tertiary accent items.\n\n### 2.2 Semantic Roles (Light Mode)\n- **Primary Background** (`--bg-primary`): `#faf9f5` (Warm Cream)\n- **Secondary Background** (`--bg-secondary`): `#ffffff` (Pure White, used for cards)\n- **Tertiary Background** (`--bg-tertiary`): `#e8e6dc` (Off-white surfaces and pills)\n- **Primary Text** (`--text-primary`): `#141413` (Charcoal)\n- **Secondary Text** (`--text-secondary`): `#575754` (Soft gray-brown)\n- **Muted Text** (`--text-muted`): `#8c8a82` (Warm muted gray)\n- **Border Color** (`--border-color`): `#e8e6dc` (Delicate divider)\n- **Border Hover Color** (`--border-hover`): `#b0aea5` (Mid-gray divider)\n- **Header Background** (`--header-bg`): `rgba(250, 249, 245, 0.85)` (Semi-transparent cream blur)\n- **Code Background** (`--code-bg`): `#f5f4ef` (Very soft warm gray)\n\n### 2.3 Semantic Roles (Dark Mode)\n- **Primary Background** (`--bg-primary`): `#141413` (Charcoal)\n- **Secondary Background** (`--bg-secondary`): `#1d1d1c` (Dark-charcoal, used for cards)\n- **Tertiary Background** (`--bg-tertiary`): `#2e2e2c` (Slate dark gray)\n- **Primary Text** (`--text-primary`): `#faf9f5` (Warm Cream)\n- **Secondary Text** (`--text-secondary`): `#dcdbd5` (Soft warm white)\n- **Muted Text** (`--text-muted`): `#a1a097` (Sage gray)\n- **Border Color** (`--border-color`): `#2e2e2c` (Dark divider)\n- **Border Hover Color** (`--border-hover`): `#4a4a47` (Mid-dark divider)\n- **Header Background** (`--header-bg`): `rgba(20, 20, 19, 0.85)` (Semi-transparent charcoal blur)\n- **Code Background** (`--code-bg`): `#282827` (Very dark charcoal tint)\n\n---\n\n## 3. Typography Rules\n\nThe typography is carefully curated to balance editorial hierarchy with modern tech utility.\n\n### 3.1 Typefaces\n- **Primary Font (Body/Descriptions)**: `Lora`, Georgia, serif. Standard body text features a rich, literary feel.\n- **Secondary Font (UI Elements/Headings)**: `Poppins`, sans-serif. Used for headers, menus, button text, search inputs, and pills.\n- **Monospace Font (Technical Data)**: `JetBrains Mono`, monospace. Employed for code blocks, inline code snippets, hex colors, and file sizes.\n\n### 3.2 Typography Scale & Weights\n\n| Role | Font Family | Size | Weight | Letter Spacing | Line Height |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| **Hero Title** | Poppins | `3rem` (`48px`) | `800` | `-1.5px` | `1.2` |\n| **Markdown H1** | Poppins | `2.2rem` (`35px`) | `700` | `-0.5px` | `1.2` |\n| **Markdown H2** | Poppins | `1.6rem` (`25px`) | `700` | `normal` | `1.2` |\n| **Card / Title H3** | Poppins | `1.35rem` (`21px`) | `700` | `-0.5px` | `1.2` |\n| **Markdown H3** | Poppins | `1.25rem` (`20px`) | `700` | `normal` | `1.2` |\n| **Hero Description** | Lora | `1.15rem` (`18px`) | `400` | `normal` | `1.6` |\n| **Markdown Body** | Lora | `1.05rem` (`17px`) | `400` | `normal` | `1.6` |\n| **Body / Description**| Lora | `0.9rem` (`14px`) | `400` | `normal` | `1.6` |\n| **Buttons / Navigation**| Poppins | `0.95rem` (`15px`) | `600` | `normal` | `1.2` |\n| **Small / Badges** | Poppins | `0.75rem` (`12px`) | `500` / `600` | `0.5px` | `1.2` |\n| **Technical Stats** | JetBrains Mono| `0.65rem` (`10px`) | `400` | `normal` | `1.2` |\n\n---\n\n## 4. Component Stylings\n\n### 4.1 Navigation Header (`.site-header`)\n- **Structure**: Fixed top bar with a flexible row layout.\n- **Visuals**: Border bottom (`1px solid var(--border-color)`), blurred background (`backdrop-filter: blur(12px)`).\n- **Interactive Elements**:\n  - Logo scales and rotates slightly on hover.\n  - Curator info tag (`.curator-tag`): Curved pill shape, background `var(--bg-tertiary)`.\n  - Star on GitHub button: Outline styling, rounded borders.\n  - Theme toggler (`.theme-btn`): `50%` round circle border, changes icon (Sun/Moon) dynamically.\n\n### 4.2 Buttons (`.btn`)\n- **Primary CTA**:\n  - Background: `var(--accent-orange)` (`#d97757`).\n  - Text: `#ffffff` (White).\n  - Hover: Background changes to `#c86343`, translates up `1px`, and adds orange glow shadow (`0 4px 12px rgba(217, 119, 87, 0.3)`).\n- **Secondary / Outline**:\n  - Background: `transparent`.\n  - Border: `1px solid var(--border-color)`.\n  - Hover: Border matches text, background becomes `var(--bg-tertiary)`.\n- **Card-Specific Action Buttons**:\n  - Main action button (`.btn-card-action`): Starts as `var(--bg-tertiary)` but turns orange on card hover, highlighting the call to view the brand details.\n  - Secondary buttons (`.btn-card-secondary`): Small outline style, layout fits two side-by-side in the card footer.\n\n### 4.3 Brand Cards (`.brand-card`)\n- **Structure**: Rounded box layout (`border-radius: 12px`), bordered default state (`1px solid var(--border-color)`), padded content (`24px`).\n- **Interactive Elevation**: Hovering lifts the card slightly (`transform: translateY(-4px)`), deepens shadow from `var(--shadow-sm)` to `var(--shadow-md)`, and darkens borders.\n- **Top Swatches Grid**: A row of color dot buttons displaying the brand's primary colors. Hovering a dot scales it and shows a tooltip containing the hex color string. Clicking the dot copies it.\n\n### 4.4 Search Input & Search Box\n- **Search Wrapper**: Integrates search icon, text input, and clear button overlay.\n- **Input Field**: Rounded pill layout (`border-radius: 30px`), shadow-sm, Poppins typography.\n- **Focus**: Border turns terracotta-orange (`#d97757`) with a 4px soft ring glow (`rgba(217, 119, 87, 0.15)`).\n\n### 4.5 Reader Drawer Overlay (`.reader-drawer`)\n- **Backdrop Overlay**: Semi-transparent dark overlay (`rgba(20, 20, 19, 0.4)`) with backdrop blur (`4px`).\n- **Drawer Pane**: Width `85%` (max-width `1200px`), slides in from right (`right: 0`), using smooth ease-out animation.\n- **Drawer Sidebar**: Left-aligned, width `260px`, containing:\n  - Document index index/headings (`.sidebar-nav`) highlighting section anchors.\n  - Swatch collection (`.palette-swatch-list`) displaying color chips that copy on click.\n- **Drawer Content Panel**: Renders parsed Markdown with standard typography rules, orange-bordered blockquotes (`blockquote`), code boxes (`pre`), and inline hex-color chips.\n\n---\n\n## 5. Layout & Spacing Principles\n\n- **Fluid Grid Containment**: Standard content sections are bound to a maximum width of `1300px` with horizontal padding of `24px`.\n- **Grid Layouts**: Brand catalog features a flexible grid (`grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))`).\n- **Spacing Scale**:\n  - Section paddings and margins: `40px` to `80px`.\n  - Internal card spacing: `16px` to `24px`.\n  - Micro-spacing (items/text blocks): `6px` to `14px`.\n- **Border Radii Scale**:\n  - Small Elements (code chips, inline swatches, small badges): `4px`\n  - Small Buttons/Pills: `6px`\n  - Standard Buttons: `8px`\n  - Cards / Drawer Containers: `12px`\n  - Rounded Badges / Search Inputs / Toast / curator tag: `20px` to `30px`\n  - Theme Toggle Button / Swatches Dots: `50%` (Circular)\n\n---\n\n## 6. Depth & Elevation\n\n| Level | Styling Treatment | Use Case |\n| :--- | :--- | :--- |\n| **Level 0 (Flat)** | Background primary, border-color | Page body, default inline structures |\n| **Level 1 (Surface)** | Background secondary, `--shadow-sm` | Default brand cards, inactive buttons |\n| **Level 2 (Active/Lifted)** | Background secondary, `--shadow-md`, transform | Hovered brand cards, active search fields |\n| **Level 3 (Drawer / Modal)**| Background secondary, `--shadow-lg`, backdrop-filter blur | Slide-out viewer overlay panel |\n| **Level 4 (Overlay)** | Background dark (or cream in dark mode), `--shadow-lg` | Clipboard/Theme Toast notifications |\n\n---\n\n## 7. Do's and Don'ts\n\n### Do:\n- Match `Lora` for body/descriptions and `Poppins` for headings/structural labels.\n- Use CSS variables (`var(--bg-primary)`, etc.) to respect theme switching.\n- Utilize transition classes (`--transition-fast`, `--transition-normal`) for all interactive animations.\n- Display `JetBrains Mono` for all sizes, color hex codes, and technical values.\n- Retain subtle border definitions (`#e8e6dc`) to separate sections instead of using excessive dark shadows.\n\n### Don't:\n- Don't use pure black (`#000000`) for text; use charcoal (`#141413`) in light mode and off-white (`#faf9f5`) in dark mode.\n- Don't apply sharp corner radii on buttons and cards; preserve the soft organic shapes of the visual system.\n- Don't add arbitrary spacing or sizes outside of the defined typography grid and spacing system.\n- Don't bypass the theme toggling properties when introducing custom components.\n\n---\n\n## 8. Responsive Behavior\n\n- **Mobile (<600px)**:\n  - Header curator tag collapses.\n  - Page footer elements shift to centered vertical column stack.\n  - Main header adjusts alignment.\n- **Tablet / Mid-Screen (<900px)**:\n  - Hero heading scales down to `2.2rem` (`35px`) to prevent overflow.\n  - Drawer pane occupies `100%` viewport width.\n  - Drawer content layouts stack: the `260px` sidebar becomes a top-aligned, scrollable index navigation menu (max-height `200px`), and the extracted color swatch list is hidden.\n\n---\n\n## 9. Agent Prompt Guide\n\n### 9.1 Quick Color Reference\n- Primary Accent: Terracotta (`#d97757`)\n- Primary Text: Charcoal (`#141413`) in light mode, Warm Cream (`#faf9f5`) in dark mode\n- Page background: Cream (`#faf9f5`) in light mode, Charcoal (`#141413`) in dark mode\n- Card Background: White (`#ffffff`) in light mode, Dark Gray (`#1d1d1c`) in dark mode\n- Border color: Off-white (`#e8e6dc`) in light mode, Charcoal-gray (`#2e2e2c`) in dark mode\n\n### 9.2 Component Prompts\n\n- **Search Bar**:\n  \"Build a pill-shaped search input with `border-radius: 30px` and padding `16px 20px 16px 52px`. Include a magnifying glass icon on the left. On focus, transition border color to terracotta `#d97757` and add a soft shadow ring `0 0 0 4px rgba(217, 119, 87, 0.15)`.\"\n\n- **Brand Catalog Card**:\n  \"Build a card on white background with `border-radius: 12px` and border `1px solid #e8e6dc`. On hover, translate the card up by 4px, darken border to `#b0aea5`, and change shadow to a soft medium glow. Inside the card, display an uppercase categories label in Poppins font, a bold title, and a small, gray size-badge. The card footer should contain a full-width CTA button that turns terracotta `#d97757` on card hover.\"\n\n- **Toast Popup**:\n  \"Create a fixed toast alert centered at the bottom. Use a charcoal background (`#141413`), white text, and `border-radius: 30px`. The toast should animate on display by sliding up (`translateY(0)` from `translateY(100px)`) and fading in.\"\n"}], "grading": {"expectations": [{"text": "The DESIGN.md file is created successfully in the output directory", "passed": true, "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-1-local-codebase\\without_skill\\outputs\\DESIGN.md (12664 chars)"}, {"text": "The DESIGN.md file has standard YAML frontmatter starting with ---", "passed": false, "evidence": "File does not start with YAML delimiter '---'."}, {"text": "The output contains custom CSS variables (like --accent-orange, --accent-green, --accent-blue, --anthropic-dark or similar) extracted from the local CSS files", "passed": true, "evidence": "Checked custom codebase tokens: has orange: True, green: True, dark: True"}, {"text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)", "passed": false, "evidence": "Sections present: Do's and Don'ts. Missing: ## Overview, ## Colors, ## Typography, ## Layout, ## Components, ## Responsive Behavior"}], "summary": {"passed": 2, "failed": 2, "total": 4, "pass_rate": 0.5}, "execution_metrics": {"output_chars": 12664, "transcript_chars": 15000}, "timing": {"executor_duration_seconds": 120.0, "grader_duration_seconds": 5.0, "total_duration_seconds": 125.0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Automated grade based on script criteria."}}}, {"id": "eval-2-url-github-with_skill", "prompt": "Analyze the live site https://github.com and generate its structured DESIGN.md file under the current directory.", "eval_id": 2, "outputs": [{"name": "DESIGN.md", "type": "text", "content": "---\nversion: alpha\nname: github-design-analysis\ndescription: GitHub's design system, Primer, defines a clean, high-density, utility-driven interface. It prioritizes readability, developer efficiency, and semantic layout patterns with minimal visual decoration.\ncolors:\n  primary: \"#0969da\"\n  primary-hover: \"#1c8139\"\n  canvas: \"#ffffff\"\n  canvas-muted: \"#f6f8fa\"\n  ink: \"#1f2328\"\n  muted: \"#59636e\"\n  hairline: \"#d1d9e0\"\n  border-strong: \"#818b98\"\n  success: \"#1f883d\"\n  danger: \"#cf222e\"\n  attention: \"#9a6700\"\n  done: \"#8250df\"\ntypography:\n  display-xl:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"48px\"\n    fontWeight: 600\n    lineHeight: 1.25\n    letterSpacing: \"-0.02em\"\n  display-lg:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"40px\"\n    fontWeight: 600\n    lineHeight: 1.25\n    letterSpacing: \"-0.02em\"\n  title-lg:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"32px\"\n    fontWeight: 600\n    lineHeight: 1.25\n    letterSpacing: \"-0.01em\"\n  title-md:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"24px\"\n    fontWeight: 600\n    lineHeight: 1.25\n    letterSpacing: \"0em\"\n  title-sm:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"20px\"\n    fontWeight: 600\n    lineHeight: 1.25\n    letterSpacing: \"0em\"\n  body-lg:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"16px\"\n    fontWeight: 400\n    lineHeight: 1.5\n    letterSpacing: \"0em\"\n  body-md:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"14px\"\n    fontWeight: 400\n    lineHeight: 1.5\n    letterSpacing: \"0em\"\n  button-md:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"14px\"\n    fontWeight: 600\n    lineHeight: 1.42\n    letterSpacing: \"0em\"\n  nav-link:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"14px\"\n    fontWeight: 400\n    lineHeight: 1.5\n    letterSpacing: \"0em\"\n  caption:\n    fontFamily: \"-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif\"\n    fontSize: \"12px\"\n    fontWeight: 400\n    lineHeight: 1.33\n    letterSpacing: \"0em\"\n  code:\n    fontFamily: \"ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace\"\n    fontSize: \"12px\"\n    fontWeight: 400\n    lineHeight: 1.6\n    letterSpacing: \"0em\"\nrounded:\n  none: \"0px\"\n  xs: \"2px\"\n  sm: \"4px\"\n  md: \"6px\"\n  lg: \"8px\"\n  xl: \"12px\"\n  pill: \"9999px\"\nspacing:\n  xxs: \"4px\"\n  xs: \"8px\"\n  sm: \"12px\"\n  md: \"16px\"\n  base: \"20px\"\n  lg: \"24px\"\n  xl: \"32px\"\n  xxl: \"40px\"\n  section: \"64px\"\ncomponents:\n  button-primary:\n    backgroundColor: \"{colors.success}\"\n    textColor: \"{colors.canvas}\"\n    typography: \"{typography.button-md}\"\n    borderRadius: \"{rounded.md}\"\n    padding: \"{spacing.xs} {spacing.md}\"\n    height: \"32px\"\n  button-secondary:\n    backgroundColor: \"{colors.canvas-muted}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.button-md}\"\n    borderRadius: \"{rounded.md}\"\n    padding: \"{spacing.xs} {spacing.md}\"\n    height: \"32px\"\n  text-input:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    typography: \"{typography.body-md}\"\n    borderRadius: \"{rounded.md}\"\n    padding: \"{spacing.xxs} {spacing.xs}\"\n    height: \"32px\"\n  property-card:\n    backgroundColor: \"{colors.canvas}\"\n    textColor: \"{colors.ink}\"\n    borderRadius: \"{rounded.lg}\"\n    padding: \"{spacing.md}\"\n    border: \"1px solid {colors.hairline}\"\n  top-navigation:\n    backgroundColor: \"{colors.ink}\"\n    textColor: \"{colors.canvas-muted}\"\n    padding: \"{spacing.md} {spacing.lg}\"\n    height: \"64px\"\n---\n\n## Overview\n\nGitHub's Primer design system features a clean, highly structured, and information-dense aesthetic tailored specifically for developer workflows. The interface is optimized to convey deep content and metadata with minimal visual noise.\n\n### Key Characteristics\n- **Semantic, Theme-First Color System**: Color variables adapt seamlessly to dark/light environments while supporting accessibility requirements.\n- **High-Density Typography**: Clean system fonts utilizing responsive scales and unitless line heights aligned to a 4px vertical grid.\n- **Structured Spacing (Base-8)**: Systematic layout, gap, and margin sizes utilizing multiples of 8px (with 4px for fine adjustments).\n- **Minimal Visual Ornamentation**: Avoids heavy drop shadows and complex gradients, opting for flat surfaces separated by subtle 1px border lines.\n- **State-Driven Styling**: Immediate, clear interactive feedback (hover, focus, active, disabled) across all interactive components.\n- **Responsive Adaptability**: Layout structures shift gracefully from multi-column grids to single column interfaces.\n- **Accessibility-Focused Semantics**: Text contrasts, focus outlines, and input touch targets are designed for ease of use by all developers.\n- **Code-Centric Elements**: Monospaced font blocks integrated smoothly alongside system text for code representation.\n\n---\n\n## Colors\n\n### Brand & Accent\n- **Primary (Accent)**: `#0969da` - Used for links, primary interactions, active tabs, and highlighted borders.\n\n### Surface\n- **Canvas**: `#ffffff` - Standard page background for major layout content.\n- **Canvas Muted**: `#f6f8fa` - Secondary background for table headers, sidebars, and inactive controls.\n- **Overlay**: `#ffffff` - Used for dropdown menus, modals, and hover previews.\n\n### Hairlines & Borders\n- **Hairline**: `#d1d9e0` - Standard boundary line for dividing layout sections, tables, cards, and input fields.\n- **Border Strong**: `#818b98` - Emphasized boundaries or outline on focus/hover.\n\n### Text\n- **Ink (Default)**: `#1f2328` - Primary body and heading text for maximum contrast.\n- **Muted**: `#59636e` - Gray secondary text for descriptions, helper text, and secondary labels.\n\n### Semantic\n- **Success**: `#1f883d` - Success messages, green badges, open pull request status, and primary action buttons.\n- **Danger**: `#cf222e` - Error states, destructive buttons, and closed issue/PR indicators.\n- **Attention**: `#9a6700` - Warnings, pending/draft status indicators, and alerts.\n- **Done**: `#8250df` - Completed actions, merged pull requests, and done status indicators.\n\n---\n\n## Typography\n\n### Font Family\n- **Primary**: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif`\n- **Monospace**: `ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace`\n\n### Hierarchy Table\n| Token | Size | Weight | Line Height | Letter Spacing | Use |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| `display-xl` | 48px | 600 | 1.25 | -0.02em | Hero headers, major marketing pages. |\n| `display-lg` | 40px | 600 | 1.25 | -0.02em | Section titles on landing pages. |\n| `title-lg` | 32px | 600 | 1.25 | -0.01em | Repository headers, main page titles. |\n| `title-md` | 24px | 600 | 1.25 | 0em | Subsection titles, card headers. |\n| `title-sm` | 20px | 600 | 1.25 | 0em | In-page widget titles, sidebar categories. |\n| `body-lg` | 16px | 400 | 1.5 | 0em | Blog posts, marketing copy body text. |\n| `body-md` | 14px | 400 | 1.5 | 0em | Standard system font for files, tables, comments. |\n| `button-md` | 14px | 600 | 1.42 | 0em | Interactive labels on primary/secondary buttons. |\n| `nav-link` | 14px | 400 | 1.5 | 0em | Top navigation elements, tab links. |\n| `caption` | 12px | 400 | 1.33 | 0em | Subtitles, metadata, timestamps. |\n| `code` | 12px | 400 | 1.6 | 0em | Inline code snippets, code block viewports. |\n\n### Principles\n- Always pair specific line-heights with their corresponding font-size tokens to prevent vertical alignment breakages.\n- Negative letter-spacing is applied exclusively to large display sizes (`display-xl` and `display-lg`) to preserve compactness.\n- Normal text should remain readable and zoomable, avoiding scaling below `12px` wherever possible.\n\n### Note on Font Substitutes\n- If system font stacks are not available, the Google Font **Inter** should be used as the primary fallback, and **JetBrains Mono** or **Roboto Mono** as the monospace fallback.\n\n---\n\n## Layout\n\n### Spacing System\n- `xxs` (4px) - Mini gaps, inline element offsets, tiny padding adjustments.\n- `xs` (8px) - Gap between buttons, compact padding, standard margins for small badges.\n- `sm` (12px) - Padding within dropdown items, label offsets.\n- `md` (16px) - Default component padding, layout gutter spacer.\n- `base` (20px) - Medium gap spacing, container paddings.\n- `lg` (24px) - Main layout spacing, margins between major UI modules.\n- `xl` (32px) - Generous vertical spacing between main layout rows.\n- `xxl` (40px) - Structural margins between columns and large section containers.\n- `section` (64px) - Large spacing for marketing headers and landing page hero sections.\n\n### Grid & Container\n- **Desktop Max-Width**: `1280px` centered with `24px` gutters.\n- **Mobile Container**: Full-width with `16px` padding on margins.\n- **Column Patterns**: 12-column layout for dashboard structures; typical repository layouts feature a two-column sidebar template (75% content area, 25% sidebar).\n\n### Whitespace Philosophy\n- High information density; whitespace is controlled tightly using the 8px grid to present raw data and metadata clearly without wasting screen space.\n\n---\n\n## Elevation & Depth\n\n| Level | Treatment | Use |\n| :--- | :--- | :--- |\n| `Level 0` | Flat, no shadow, border `1px solid #d1d9e0` | Default state for cards, tables, and page layout. |\n| `Level 1` | `box-shadow: 0 1px 0 rgba(31, 35, 40, 0.04)` | Standard button resting state, small floating items. |\n| `Level 2` | `box-shadow: 0 3px 6px rgba(140, 149, 159, 0.15)` | Dropdowns, popovers, small tooltips. |\n| `Level 3` | `box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2)` | Modals, dialog boxes, and floating command menus. |\n\n- **Decorative Rules**: High contrast borders are preferred over soft shadows. Backdrop blur (`backdrop-filter: blur(8px)`) with semi-transparent overlay `#c8d1da66` is used for modals.\n\n---\n\n## Shapes\n\n### Border-Radius Scale\n| Token | Radius Value | Component Types |\n| :--- | :--- | :--- |\n| `none` | 0px | Straight edges, full-width header items. |\n| `xs` | 2px | Tiny tags, inline code snippets. |\n| `sm` | 4px | Small interactive buttons, input borders. |\n| `md` | 6px | Standard button, dropdown menu wrappers, search inputs. |\n| `lg` | 8px | Repository cards, container wrappers. |\n| `xl` | 12px | Modals, floating banners. |\n| `pill` | 9999px | Circle avatars, notification badges, pull request status pills. |\n\n### Photography Geometry\n- Images and avatars must be masked as perfect circles (`border-radius: 50%`) for user avatars, and slightly rounded squares (`6px`) for organizations, repositories, and media previews.\n\n---\n\n## Components\n\n### Buttons\n- **Primary Button**: Background color `{colors.success}`, text color `{colors.canvas}`, height `32px`. Hover state changes background to `{colors.primary-hover}`.\n- **Secondary Button**: Background color `{colors.canvas-muted}`, border `1px solid {colors.hairline}`, text color `{colors.ink}`, height `32px`.\n- **Danger Button**: Background color `{colors.canvas-muted}`, border `1px solid {colors.hairline}`, text color `{colors.danger}`. Hover state has background `{colors.danger}` and text color `{colors.canvas}`.\n\n### Input Fields\n- Background color `{colors.canvas}`, border `1px solid {colors.hairline}`, border-radius `{rounded.md}`, text color `{colors.ink}`, padding `{spacing.xxs} {spacing.xs}`, height `32px`. Focus state applies border color `{colors.primary}` and standard blue shadow ring.\n\n### Cards\n- Background color `{colors.canvas}`, border `1px solid {colors.hairline}`, border-radius `{rounded.lg}`, padding `{spacing.md}`.\n\n### Top Navigation\n- Background color `#24292f` or `{colors.ink}`, text color `{colors.canvas-muted}`, padding `{spacing.md} {spacing.lg}`, height `64px`. Includes logo link and navigation item links using `{typography.nav-link}`.\n\n### Footers\n- Background color `{colors.canvas}`, border-top `1px solid {colors.hairline}`, text color `{colors.muted}`, typography `{typography.caption}`, padding `{spacing.xl} {spacing.md}`.\n\n---\n\n## Responsive Behavior\n\n### Breakpoints\n| Name | Width | Key Changes |\n| :--- | :--- | :--- |\n| `sm` | 544px | Fluid single-column view, navigation collapses to dropdown/hamburger menu. |\n| `md` | 768px | Standard tablet layout, cards adapt to 2-column grid. |\n| `lg` | 1012px | Repository view shifts to 2-column sidebar template. |\n| `xl` | 1280px | Max container width constraint applies, full sidebar rendering. |\n\n### Touch Targets\n- Interactive components on viewports smaller than `544px` scale to a minimum touch target height of `44px`.\n\n### Collapsing Strategy\n- Header links are collapsed into a toggleable panel. Grids and repository detail tables collapse into simple stacked lists. Font sizes scale down using responsive type scales (e.g., `f1` to `f2`).\n\n---\n\n## Do's and Don'ts\n\n### Do\n- **Do** use semantic token references like `{colors.primary}` instead of raw hex codes.\n- **Do** align layout spacing to multiples of 8px to ensure mathematical harmony.\n- **Do** use system font stacks to ensure native performance and instant page load speeds.\n- **Do** preserve the 4px vertical type rhythm by using unitless line-heights.\n- **Do** use `Level 0` flat borders for core content wrappers and tables rather than decorative card drop-shadows.\n\n### Don't\n- **Don't** mix multiple custom font families that degrade page loading performance.\n- **Don't** use arbitrary padding or margins (like `15px` or `7px`) that violate the base-8 spacer system.\n- **Don't** use drop-shadows on flat page content unless it is an overlay, dialog, or floating menu.\n- **Don't** use colorful borders unless they denote a semantic status (success, warning, error, info).\n- **Don't** allow critical interactive text touch targets to drop below 44px on mobile viewports.\n\n---\n\n## Iteration Guide / Known Gaps\n\n- **Dark Mode Support**: This specification details the light mode tokens. A separate dark mode token mapping should override surface and ink variables during iteration.\n- **Interactive Component States**: Detailed transition speed guidelines (typically `transition: background-color 0.2s ease`) are not fully mapped.\n- **High-Contrast Themes**: Focus outlines for keyboards are not fully defined in this draft and should be added in iteration-2.\n"}], "grading": {"expectations": [{"text": "The DESIGN.md file is created successfully in the output directory", "passed": true, "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-2-url-github\\with_skill\\outputs\\DESIGN.md (14843 chars)"}, {"text": "The DESIGN.md file has standard YAML frontmatter starting with ---", "passed": true, "evidence": "File begins with YAML frontmatter delimiter '---'"}, {"text": "The output contains GitHub's styling/branding details (such as Primer font family, github-accent, or dark/light mode configurations)", "passed": true, "evidence": "Checked GitHub branding tags: has 'primer': True, 'github': True"}, {"text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)", "passed": true, "evidence": "Sections present: ## Overview, ## Colors, ## Typography, ## Layout, ## Components, ## Responsive Behavior, Do's and Don'ts. Missing: "}], "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0}, "execution_metrics": {"output_chars": 14843, "transcript_chars": 15000}, "timing": {"executor_duration_seconds": 120.0, "grader_duration_seconds": 5.0, "total_duration_seconds": 125.0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Automated grade based on script criteria."}}}, {"id": "eval-2-url-github-without_skill", "prompt": "Analyze the live site https://github.com and generate its structured DESIGN.md file under the current directory.", "eval_id": 2, "outputs": [{"name": "DESIGN.md", "type": "text", "content": "# GitHub Site Design Specification (DESIGN.md)\n\nThis document provides a comprehensive analysis of the design system, visual aesthetics, information architecture, interactive behaviors, and technical implementation of [GitHub.com](https://github.com). It serves as a guide for understanding the design philosophy and patterns that define the modern GitHub experience.\n\n---\n\n## 1. Product Identity & Value Proposition\n\n### 1.1 Brand Purpose & Identity\nGitHub is the world\u00e2\u20ac\u2122s leading developer platform. Its design identity balances **professional-grade utility** (for daily coding and system management) with **high-impact, premium marketing visuals** (to attract enterprise buyers and inspire developers). \n\nThe brand voice is:\n*   **Inspirational yet Practical:** Bold declarations about the future of software combined with concrete, developer-centric features.\n*   **AI-Forward:** Highlighting the transition to an \"AI-powered SDLC\" (Software Development Life Cycle) with Copilot and agentic workflows.\n*   **Developer-First:** Clear, unbloated technical terminology, code snippets, and terminal inputs that establish immediate credibility.\n\n### 1.2 Target Audience & Ideal Customer Profile (ICP)\n1.  **Individual Developers & Open Source Contributors:** Require speed, clean utility, intuitive navigation, and reliable tool integrations.\n2.  **Engineering Leaders & Managers:** Look for metrics, security controls, collaboration tools, and team velocity features.\n3.  **Enterprise Executives & Buyers:** Seek security compliance, scalability, cost reduction, and AI-driven productivity gains.\n\n### 1.3 Core User Journeys & Design Goals\n*   **Discover & Explore:** Learn what GitHub offers through rich storytelling, high-fidelity interactive demos, and interactive customer showcases.\n*   **Onboard & Convert:** Transition from curiosity to action via prominent, low-friction signup forms, clear pricing transparency, and instant codebase import.\n*   **Collaborate & Code:** Maintain high productivity in code review (Pull Requests), project tracking (Projects), and automated delivery (Actions).\n\n---\n\n## 2. Visual Design Language\n\nGitHub's visual identity relies on **Primer**, GitHub's open-source design system. The homepage, in particular, leverages the **Primer Brand** guidelines, which are specifically optimized for marketing, storytelling, and high-impact visual narratives.\n\n### 2.1 Color Palette & System\nThe site uses a themeable color system designed to support both high-impact dark mode layouts (typically used for landing pages and the homepage) and standard light/dark modes for the app interface.\n\n#### Base Theme (Dark Mode Primary)\n| Variable Name | Hex Code | Visual Description / Role |\n| :--- | :--- | :--- |\n| `canvas-default` | `#0d1117` | Primary background color. |\n| `canvas-subtle` | `#161b22` | Secondary/card background color. |\n| `canvas-inset` | `#010409` | Darkest background; used for code boxes, search fields. |\n| `border-default` | `#30363d` | Standard borders separating columns/components. |\n| `border-muted` | `#21262d` | Subtle borders for secondary elements. |\n| `fg-default` | `#f0f6fc` | Primary text color (high contrast white/off-white). |\n| `fg-muted` | `#8b949e` | Secondary/body text (muted gray). |\n| `fg-subtle` | `#484f58` | Subtext, placeholders, and disabled states. |\n\n#### Accent & Semantic Colors\n| Variable Name | Hex Code | Visual Description / Role |\n| :--- | :--- | :--- |\n| `accent-fg` | `#58a6ff` | Interactive links, active states, accent text. |\n| `success-fg` | `#3fb950` | CTAs, success indicators, \"Sign Up\" button background. |\n| `attention-fg` | `#d29922` | Warnings, intermediate status, pending checks. |\n| `danger-fg` | `#f85149` | Error alerts, deleted lines, critical status. |\n| `done-fg` | `#a371f7` | Merged Pull Requests, completed actions. |\n\n#### Brand Gradients\nGitHub utilizes glowing, space-inspired gradients on its marketing pages to signify innovation and AI integrations:\n*   **Copilot Aurora:** Gradients blending Cyan (`#4facee`), Purple (`#8a63d2`), and Pink (`#ff5a9d`) to represent AI-guided developer intelligence.\n*   **Actions Flow:** A vertical linear gradient transitioning from Blue (`#0969da`) to Purple (`#bc8cff`) to represent pipelines flowing smoothly.\n*   **Ambient Glow:** Radial blurred overlays (e.g., opacity `0.15` cyan/purple blobs in the background) that break up flat blocks of color.\n\n### 2.2 Typography System\nThe typography system prioritizes readability across multiple operating systems, falling back gracefully to system fonts while utilizing custom font families for display elements.\n\n#### Font Families\n*   **Sans-Serif (Default Interface & Body):** \n    ```css\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\";\n    ```\n*   **Monospace (Code & Terminal Elements):**\n    ```css\n    font-family: ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace;\n    ```\n*   **Display (Headings & Large Marketing Text):**\n    GitHub uses its proprietary **GitHub Sans** (or high-weight sans-serif system alternatives) to provide a clean, modern aesthetic with geometric characteristics.\n\n#### Typography Scale (Marketing & Product Pages)\n*   **Hero Heading:** `font-size: 72px` to `80px` (responsive to `48px` on mobile), `font-weight: 800`, `line-height: 1.1`, `letter-spacing: -0.02em`.\n*   **Section Heading (H2):** `font-size: 48px` (responsive to `32px` on mobile), `font-weight: 700`, `line-height: 1.2`.\n*   **Subheading (H3):** `font-size: 24px` to `32px`, `font-weight: 600`, `line-height: 1.3`.\n*   **Body Copy (Large):** `font-size: 20px`, `font-weight: 400`, `line-height: 1.5`, `color: var(--fg-muted)`.\n*   **Body Copy (Default):** `font-size: 16px`, `font-weight: 400`, `line-height: 1.5`, `color: var(--fg-muted)`.\n*   **Mono Text:** `font-size: 14px`, `line-height: 1.45`, `letter-spacing: 0`.\n\n### 2.3 Spacing & Grid System\n*   **Baseline Grid:** Built on a `4px`/`8px` incremental system. All padding, margin, and layout gaps use multiples of `8px` (`8px`, `16px`, `24px`, `32px`, `48px`, `64px`, `96px`, `128px`).\n*   **Page Container:** Maximum width of `1280px` for standard content, centered with auto-margins and padding of `16px` (mobile) to `32px` (desktop) on left/right edges.\n*   **Grid Layouts:** CSS Grid is heavily utilized for content layouts, switching from single-column on mobile viewport dimensions to `2-column` or `3-column` layouts on desktop.\n*   **Responsive Breakpoints:**\n    *   Small (Mobile): `< 544px`\n    *   Medium (Tablet): `544px` to `768px`\n    *   Large (Desktop): `768px` to `1012px`\n    *   Extra-Large (Wide Screen): `> 1012px` and `> 1280px`\n\n### 2.4 Iconography & Visual Assets\n*   **Octicons:** GitHub's bespoke SVG icon library.\n    *   **Style:** Flat, clean, single-path SVGs designed on a `16px` and `24px` grid.\n    *   **Aesthetics:** Squared corners, consistent line weights (`1.5px` or `2px`), and simple shapes to guarantee clarity at small sizes.\n*   **Visual Assets:** High-fidelity SVGs, 3D WebGL renders (such as the interactive globe), and light-up illustrations representing complex processes like workflow branching or vulnerability analysis.\n\n---\n\n## 3. Information Architecture & Page Layout\n\n```mermaid\ngraph TD\n    Nav[Global Header / Navigation] --> Hero[Hero Area: H1 + CTA + Globe]\n    Hero --> ConnectLine[Vertical Connecting Rails]\n    ConnectLine --> CopilotSec[Copilot / AI Dev Section]\n    ConnectLine --> ActionsSec[Actions / CI/CD Section]\n    ConnectLine --> SecuritySec[Advanced Security Section]\n    ConnectLine --> CommunitySec[Developer Community & Stats]\n    ConnectLine --> PricingSec[Enterprise Pricing / Contact CTA]\n    PricingSec --> Footer[Global Footer Navigation]\n```\n\n### 3.1 Global Navigation\n*   **Layout:** Sticky/floating top header with a dark, semi-translucent background (`background-color: rgba(13, 17, 23, 0.7)`) and a background blur (`backdrop-filter: blur(12px)`).\n*   **Elements (Left to Right):**\n    *   GitHub Invertocat Logo (white SVG).\n    *   Interactive dropdown navigation links: *Product*, *Solutions*, *Resources*, *Open Source*, *Pricing*.\n    *   Global Search input (collapsible or activation via hotkey `/`).\n    *   \"Sign in\" link (plain text hover state).\n    *   \"Sign up\" button (hollow or filled contrast styling).\n\n### 3.2 Hero Section\n*   **Copywriting:**\n    *   *Primary Headline:* Focuses on innovation and velocity (e.g., \"Build what's next\" or \"Let's build from here\").\n    *   *Supporting Paragraph:* Captures the scale of the community (over 100M+ developers, 4M+ organizations) and AI support.\n*   **Layout Structure:**\n    *   **Left Column (60% width):** Headlines, supporting paragraph, and the main CTA block consisting of a dark email input field juxtaposed with a green \"Sign up for GitHub\" button, followed by secondary \"Start a free enterprise trial\" link.\n    *   **Right Column (40% width):** Interactive 3D WebGL Globe showing global collaboration, network lines, and code commits floating across continents in real-time.\n\n### 3.3 Product Feature Verticals\nEach vertical (Copilot, Actions, Security, Codespaces) follows a repeating, structured visual narrative:\n1.  **Connecting Line Entrance:** A thin, luminous timeline/rail scrolls down the left side, anchoring the user's scroll.\n2.  **Section Header:** Large H2 text accompanied by a colored Octicon badge that represents the category (e.g., green check for Actions, purple spark for Copilot, pink shield for Security).\n3.  **Core Feature Pitch:** Compelling copywriting explaining the \"why\" and metrics illustrating the value proposition (e.g., \"55% faster coding with GitHub Copilot\").\n4.  **Interactive Sandbox / Demo Card:** Large visual container showcasing the product in action (e.g., animated code typing, workflow builder visualizer, or dependency graph tree).\n\n### 3.4 Social Proof & Customer Showcases\n*   **Logos Grid:** Monochrome list of Fortune 100 enterprise logos (e.g., Stripe, Pinterest, PG&E, Toyota) to project enterprise security and readiness.\n*   **Customer Case Studies:** Rich testimonials featuring developer quotes, high-resolution employee headshots, and highlight metrics (e.g., \"99% reduction in build times\").\n\n### 3.5 Global Footer\n*   **Background:** Solid dark background (`#0d1117`) with top border separation (`#30363d`).\n*   **Structure:** Six columns organizing footer navigation links:\n    *   *Product:* Features, Security, Team, Enterprise, Customer Stories, Pricing, Resources.\n    *   *Platform:* Developer API, Partners, Atom, Electron, GitHub Desktop.\n    *   *Support:* Docs, Community Forum, Professional Services, Contact Support, Status.\n    *   *Company:* About, Blog, Careers, Press, Shop.\n    *   *Terms & Legal:* Terms, Privacy, Site Map, Cookies.\n    *   *Socials:* Icons for Twitter/X, GitHub, YouTube, LinkedIn, Facebook.\n\n---\n\n## 4. Interactive UI Components & Animation Specifications\n\nGitHub.com's marketing pages utilize premium visual interactions that keep the site feeling alive and technologically superior.\n\n### 4.1 Real-Time 3D WebGL Globe\n*   **Tech Stack:** Built using custom WebGL/Three.js scripts.\n*   **Visual Style:** A stylized, translucent blue/gray sphere. Continents are defined by points of light rather than solid shapes.\n*   **Behavior:**\n    *   Slow, autonomous rotation on the Y-axis.\n    *   Users can drag/swipe to rotate and explore specific geographical areas.\n    *   Luminous arcs (bezier curves) shoot out between major global tech hubs to represent code distribution.\n    *   Small floating tooltips display real-time commit data (e.g., \"Developer in Tokyo pushed 14 commits to main\").\n\n### 4.2 Connective Rails / Scroll-Triggered Lines\n*   **Visual Design:** A vertical line, `2px` wide, with a muted border color (`#30363d`).\n*   **Interaction:** \n    *   As the user scrolls down the page, a gradient fill (representing \"energy\" or \"light\") matches the scroll position, animating down the line.\n    *   Circular anchor nodes along the line light up with color accents as they enter the browser viewport.\n*   **Implementation Note:** Uses the intersection observer API to track viewport positioning and interpolate gradient sizing.\n\n### 4.3 Interactive Code Playground (Copilot Demo)\n*   **Interface:** A mockup of a VS Code window containing a mock editor workspace.\n*   **Animation Loop:**\n    1.  *Trigger:* An input prompt is \"typed\" out character by character (e.g., `// function to calculate distance between two coordinates`).\n    2.  *AI Generation:* A ghost-text suggestion appears in light gray, simulating Copilot's prompt autocomplete suggestion.\n    3.  *Acceptance:* The developer hits `Tab`, and the text instantly completes, highlighting the accepted syntax in full color.\n    4.  *Cycle:* Pauses for 3 seconds, clears, and repeats with a different coding language (e.g., Python, Go, TypeScript).\n\n### 4.4 Tabbed Workspace (Actions / Security)\n*   **Layout:** A sidebar menu representing different steps (e.g., *Build*, *Test*, *Deploy*) linked to a main panel displaying a corresponding terminal output or workflow graph.\n*   **Hover/Focus States:** Tabs feature subtle left-border color changes and background opacity animations on hover. Active tabs receive a solid accent border and full text opacity.\n\n---\n\n## 5. SEO & Accessibility (A11y) Strategy\n\n### 5.1 SEO Structure & Semantics\n*   **Semantic HTML:** \n    *   One main `<h1>` per landing page containing core keywords (e.g., \"GitHub: Let's build from here\").\n    *   Descriptive nested headers (`<h2>` for major sections, `<h3>` for feature callouts) to maintain semantic reading structure.\n    *   `<section>`, `<article>`, and `<aside>` containers instead of nested generic `<div>` blocks.\n*   **Metadata:**\n    *   `<title>` elements containing primary keywords and platform branding.\n    *   `<meta name=\"description\">` containing compelling, conversion-focused summary copy.\n    *   Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`) to ensure shared links display customized preview images on platforms like X/Twitter, Slack, and LinkedIn.\n*   **Structured Data / Schema Markup:**\n    *   JSON-LD schemas for `SoftwareApplication`, `Organization`, and `FAQ` to secure Google Rich Results (star ratings, site links, product search boxes).\n\n### 5.2 Accessibility Compliance\nGitHub implements accessibility as a core design requirement rather than an afterthought.\n*   **Keyboard Navigability:** Standardized focus rings (blue accent borders with high contrast) highlight interactive elements when navigating using the `Tab` key.\n*   **Color Contrast:** Text-to-background color contrast satisfies Web Content Accessibility Guidelines (WCAG) 2.1 AA compliance (ratio of at least `4.5:1` for regular text and `3:1` for large text).\n*   **Screen Reader Friendly:** \n    *   Interactive custom elements feature accurate `aria-label`, `aria-expanded`, and `aria-controls` bindings.\n    *   All SVGs and graphic illustrations utilize `role=\"img\"` and contain `<title>` or `aria-label` declarations.\n    *   Purely decorative visual elements are explicitly hidden from screen readers using `aria-hidden=\"true\"`.\n\n---\n\n## 6. Technical Architecture & Performance\n\n### 6.1 Frontend Stack & Design Tokens\n*   **Component System:** Built primarily using React components (`@primer/react`) integrated with custom Web Components (using GitHub's own open-source framework, Catalyst).\n*   **Styles:** Primer Brand CSS provides modular utility sheets that isolate marketing components from the core web app styles, keeping bundle sizes minimal.\n*   **CSS Variables:** Core design tokens (spacing, fonts, colors, border-radius) are compiled as CSS variables at the `:root` level, enabling seamless theme switching.\n\n### 6.2 Performance Optimizations\n*   **Asset Lazy Loading:**\n    *   Non-critical SVGs, background visual art, and customer logos are lazy loaded utilizing `loading=\"lazy\"` attributes.\n    *   3D WebGL assets are dynamically imported and initialized only when the user scrolls near the hero section, avoiding CPU bottlenecks during page load.\n*   **Asset Optimization:**\n    *   Visual graphics are delivered in next-gen `.webp` or `.avif` formats.\n    *   SVG illustrations are minified, stripping out unused metadata and inline styling blocks.\n*   **Caching & CDNs:** Assets are delivered via high-performance content delivery networks (CDNs) using optimized HTTP/2 and HTTP/3 multiplexing strategies to reduce latency globally.\n"}], "grading": {"expectations": [{"text": "The DESIGN.md file is created successfully in the output directory", "passed": true, "evidence": "DESIGN.md exists at c:\\Users\\Abo Alrejal\\Desktop\\design-md\\design-md-generator-workspace\\iteration-1\\eval-2-url-github\\without_skill\\outputs\\DESIGN.md (16579 chars)"}, {"text": "The DESIGN.md file has standard YAML frontmatter starting with ---", "passed": false, "evidence": "File does not start with YAML delimiter '---'."}, {"text": "The output contains GitHub's styling/branding details (such as Primer font family, github-accent, or dark/light mode configurations)", "passed": true, "evidence": "Checked GitHub branding tags: has 'primer': True, 'github': True"}, {"text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)", "passed": false, "evidence": "Sections present: ## Typography. Missing: ## Overview, ## Colors, ## Layout, ## Components, ## Responsive Behavior, Do's and Don'ts"}], "summary": {"passed": 2, "failed": 2, "total": 4, "pass_rate": 0.5}, "execution_metrics": {"output_chars": 16579, "transcript_chars": 15000}, "timing": {"executor_duration_seconds": 120.0, "grader_duration_seconds": 5.0, "total_duration_seconds": 125.0}, "claims": [], "user_notes_summary": {"uncertainties": [], "needs_review": [], "workarounds": []}, "eval_feedback": {"suggestions": [], "overall": "Automated grade based on script criteria."}}}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "design-md-generator", "skill_path": "<path/to/skill>", "executor_model": "<model-name>", "analyzer_model": "<model-name>", "timestamp": "2026-06-05T02:38:39Z", "evals_run": [], "runs_per_configuration": 3}, "runs": [], "run_summary": {"delta": {"pass_rate": "+0.00", "time_seconds": "+0.0", "tokens": "+0"}}, "notes": []}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

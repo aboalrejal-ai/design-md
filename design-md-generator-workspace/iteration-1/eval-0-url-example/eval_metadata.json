@@ -1,0 +1,23 @@
+{
+  "eval_id": 0,
+  "eval_name": "eval-0-url-example",
+  "prompt": "Analyze the website https://example.com and generate its DESIGN.md file under the current directory.",
+  "assertions": [
+    {
+      "text": "The DESIGN.md file is created successfully in the output directory",
+      "name": "file_created"
+    },
+    {
+      "text": "The DESIGN.md file has standard YAML frontmatter starting with ---",
+      "name": "has_yaml_frontmatter"
+    },
+    {
+      "text": "The output contains colors '#eee' and '#348' extracted from example.com",
+      "name": "contains_colors_extracted"
+    },
+    {
+      "text": "The DESIGN.md file contains required sections (Overview, Colors, Typography, Layout, Components, Responsive Behavior, Do's and Don'ts)",
+      "name": "contains_required_sections"
+    }
+  ]
+}

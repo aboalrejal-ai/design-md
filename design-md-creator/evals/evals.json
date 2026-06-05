@@ -1,0 +1,23 @@
+{
+  "skill_name": "design-md-creator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Analyze the website https://example.com and generate its DESIGN.md file under the current directory.",
+      "expected_output": "A DESIGN.md file for example.com containing hex colors #eee, #348 and font-families system-ui, sans-serif.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Analyze the local codebase in the current folder '.' and generate its DESIGN.md file under the current directory.",
+      "expected_output": "A DESIGN.md file with extracted Poppins and Lora fonts, custom CSS variables, and colors like #ffffff and #d97757.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze the live site https://github.com and generate its structured DESIGN.md file under the current directory.",
+      "expected_output": "A detailed DESIGN.md file capturing GitHub's branding (e.g. primer font fallbacks, dark-mode/light-mode variables, primary brand colors).",
+      "files": []
+    }
+  ]
+}

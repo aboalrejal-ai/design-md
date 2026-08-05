@@ -200,6 +200,17 @@ clearSearchBtn.addEventListener('click', () => {
 });
 
 /* ==========================================================================
+   URL Resolution Helper for GitHub Pages & Local Servers
+   ========================================================================== */
+function getFileUrl(filePath) {
+    let base = window.location.origin + window.location.pathname;
+    if (!base.endsWith('/') && !base.substring(base.lastIndexOf('/')).includes('.')) {
+        base += '/';
+    }
+    return new URL(filePath, base).href;
+}
+
+/* ==========================================================================
    Reader Drawer Logic & Markdown Rendering
    ========================================================================== */
 async function openReader(brandKey) {
@@ -221,8 +232,9 @@ async function openReader(brandKey) {
     document.body.style.overflow = 'hidden'; // lock scrolling on main body
     
     try {
-        // Fetch the file
-        const response = await fetch(`./${meta.file}`);
+        // Fetch the file with robust URL resolution for GitHub Pages / local servers
+        const fileUrl = getFileUrl(meta.file);
+        const response = await fetch(fileUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -409,7 +421,8 @@ async function copyBrandRaw(event, brandKey) {
     if (!meta) return;
     
     try {
-        const response = await fetch(`./${meta.file}`);
+        const fileUrl = getFileUrl(meta.file);
+        const response = await fetch(fileUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -428,7 +441,8 @@ async function downloadBrandFile(event, brandKey) {
     if (!meta) return;
     
     try {
-        const response = await fetch(`./${meta.file}`);
+        const fileUrl = getFileUrl(meta.file);
+        const response = await fetch(fileUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

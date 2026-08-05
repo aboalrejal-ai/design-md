@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "components": [
+    {
+      "name": "Button",
+      "dependencies": [
+        "color-primary-0",
+        "spacing-0",
+        "border-radius-0"
+      ]
+    },
+    {
+      "name": "Card",
+      "dependencies": [
+        "spacing-1",
+        "border-radius-1"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "design-creator",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Analyze the website https://example.com and generate its complete design system package in ./design-systems/example-brand.",
+      "expected_output": "A complete design package in ./design-systems/example-brand including tokens.css, components.html, USAGE.md, design-tokens.json, components.manifest.json, and DESIGN.md (in English only) reflecting example.com's styling.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Analyze the local codebase in the current folder '.' and generate a full design system package in ./design-systems/local-brand.",
+      "expected_output": "A complete design package in ./design-systems/local-brand including tokens.css, components.html, USAGE.md, design-tokens.json, components.manifest.json, and DESIGN.md reflecting the local UI tokens and components.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze the live site https://github.com and generate its structured design system package in ./design-systems/github.",
+      "expected_output": "A complete design package in ./design-systems/github including tokens.css, components.html, USAGE.md, design-tokens.json, components.manifest.json, and DESIGN.md capturing GitHub's branding (primer fonts, variables, etc.).",
+      "files": []
+    }
+  ]
+}

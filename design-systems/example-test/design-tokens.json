@@ -1,0 +1,25 @@
+{
+  "name": "Example Domain",
+  "description": "",
+  "colors": {
+    "common_hex_rgb": [
+      "#eee",
+      "#348"
+    ],
+    "variables": {}
+  },
+  "typography": {
+    "families": [
+      "system-ui",
+      "sans-serif"
+    ],
+    "sizes": [
+      "1.5em"
+    ],
+    "weights": [],
+    "line_heights": [],
+    "letter_spacings": []
+  },
+  "rounded": [],
+  "spacing": []
+}

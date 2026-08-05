@@ -1,0 +1,8 @@
+/* Design System Tokens */
+:root {
+  --color-primary-0: #eee;
+  --color-primary-1: #348;
+  --font-family-0: system-ui;
+  --font-family-1: sans-serif;
+  --font-size-0: 1.5em;
+}

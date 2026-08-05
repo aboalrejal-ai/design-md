@@ -957,6 +957,268 @@ a:hover {
 }
 
 /* ==========================================================================
+   Download Dropdown
+   ========================================================================== */
+.download-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.download-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 220px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    overflow: hidden;
+    animation: fadeInUp 0.2s ease;
+}
+
+.download-dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    font-family: var(--font-headings);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    text-align: left;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.dropdown-item:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-item:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+    color: var(--accent-orange);
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.dropdown-item-desc {
+    display: block;
+    width: 100%;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 2px;
+    padding-left: 30px;
+}
+
+/* Card-level dropdown (positioned upwards if near bottom) */
+.card-download-dropdown {
+    position: relative;
+    flex: 1;
+}
+
+.card-download-dropdown .download-dropdown-menu {
+    bottom: calc(100% + 6px);
+    top: auto;
+    right: 0;
+    left: auto;
+    min-width: 200px;
+}
+
+/* ==========================================================================
+   Drawer Tabs
+   ========================================================================== */
+.drawer-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 30px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.drawer-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.drawer-tab {
+    font-family: var(--font-headings);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 12px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.drawer-tab:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+}
+
+.drawer-tab.active {
+    color: var(--accent-orange);
+    border-bottom-color: var(--accent-orange);
+    font-weight: 600;
+}
+
+.drawer-tab.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.drawer-tab i {
+    font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   Package Badge on Cards
+   ========================================================================== */
+.package-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-headings);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--accent-green);
+    background-color: rgba(120, 140, 93, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+}
+
+body.dark-mode .package-badge {
+    background-color: rgba(120, 140, 93, 0.15);
+}
+
+/* ==========================================================================
+   ZIP Download Loading State
+   ========================================================================== */
+.zip-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(20, 20, 19, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInUp 0.2s ease;
+}
+
+.zip-loading-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 40px 48px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    max-width: 320px;
+}
+
+.zip-loading-card .spinner {
+    margin: 0 auto 16px;
+}
+
+.zip-loading-card h4 {
+    font-family: var(--font-headings);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.zip-loading-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Code display in tabs (tokens.css) */
+.tab-code-display {
+    background-color: var(--code-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Preview iframe */
+.preview-frame {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #ffffff;
+    min-height: 400px;
+}
+
+.preview-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.preview-tab-btn {
+    font-family: var(--font-headings);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.preview-tab-btn:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+.preview-tab-btn.active {
+    background-color: var(--accent-orange);
+    border-color: var(--accent-orange);
+    color: #ffffff;
+}
+
+/* ==========================================================================
    Footer Section
    ========================================================================== */
 .site-footer {

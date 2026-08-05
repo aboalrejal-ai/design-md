@@ -3,6 +3,7 @@ let activeCategory = 'all';
 let searchQuery = '';
 let selectedBrand = null;
 let rawMarkdown = '';
+let activeDrawerTab = 'design';
 
 // DOM Elements
 const searchInput = document.getElementById('search-input');
@@ -25,6 +26,12 @@ const drawerPaletteList = document.getElementById('drawer-palette-list');
 const btnCloseDrawer = document.getElementById('btn-close-drawer');
 const btnCopyRaw = document.getElementById('btn-copy-raw');
 const btnDownloadFile = document.getElementById('btn-download-file');
+const drawerTabs = document.getElementById('drawer-tabs');
+
+// Drawer Download Dropdown Elements
+const btnDownloadMd = document.getElementById('btn-download-md');
+const btnDownloadZip = document.getElementById('btn-download-zip');
+const drawerDownloadMenu = document.getElementById('drawer-download-menu');
 
 // Toast Notification
 const toast = document.getElementById('toast');
@@ -146,11 +153,17 @@ function renderBrands() {
             swatchesHtml += `</div>`;
         }
         
+        // Package badge for full systems
+        const packageBadge = brand.hasFullPackage
+            ? `<span class="package-badge"><i class="fa-solid fa-cube"></i> Full Package</span>`
+            : '';
+        
         card.innerHTML = `
             ${swatchesHtml}
             <div class="brand-category">${brand.category}</div>
             <h3>${brand.name} <span class="brand-size">${brand.size}</span></h3>
             <p class="brand-description">${brand.description || 'No description available for this system guidelines.'}</p>
+            ${packageBadge}
             <div class="card-footer">
                 <button class="btn btn-card-action" onclick="openReader('${brand.brand}')">
                     <span>View Guidelines</span> <i class="fa-solid fa-arrow-right"></i>
@@ -159,9 +172,22 @@ function renderBrands() {
                     <button class="btn btn-outline btn-sm btn-card-secondary" onclick="copyBrandRaw(event, '${brand.brand}')" title="Copy Markdown">
                         <i class="fa-solid fa-copy"></i> Copy
                     </button>
-                    <button class="btn btn-outline btn-sm btn-card-secondary" onclick="downloadBrandFile(event, '${brand.brand}')" title="Download MD File">
-                        <i class="fa-solid fa-download"></i> Download
-                    </button>
+                    <div class="card-download-dropdown">
+                        <button class="btn btn-outline btn-sm btn-card-secondary" onclick="toggleCardDropdown(event, '${brand.brand}')" title="Download">
+                            <i class="fa-solid fa-download"></i> Download <i class="fa-solid fa-caret-down" style="margin-left:2px;font-size:0.6rem"></i>
+                        </button>
+                        <div class="download-dropdown-menu" id="card-dropdown-${brand.brand}">
+                            <button class="dropdown-item" onclick="downloadBrandFile(event, '${brand.brand}', 'md')">
+                                <i class="fa-solid fa-file-lines"></i> Markdown File
+                                <span class="dropdown-item-desc">.md file only</span>
+                            </button>
+                            ${brand.hasFullPackage ? `
+                            <button class="dropdown-item" onclick="downloadBrandFile(event, '${brand.brand}', 'zip')">
+                                <i class="fa-solid fa-file-zipper"></i> Full Package (ZIP)
+                                <span class="dropdown-item-desc">All tokens, components & files</span>
+                            </button>` : ''}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -211,6 +237,172 @@ function getFileUrl(filePath) {
 }
 
 /* ==========================================================================
+   Download Dropdown Logic
+   ========================================================================== */
+function closeAllDropdowns() {
+    document.querySelectorAll('.download-dropdown-menu.show').forEach(menu => {
+        menu.classList.remove('show');
+    });
+}
+
+// Card dropdown toggle
+function toggleCardDropdown(event, brandKey) {
+    event.stopPropagation();
+    const menu = document.getElementById(`card-dropdown-${brandKey}`);
+    const isOpen = menu.classList.contains('show');
+    closeAllDropdowns();
+    if (!isOpen) {
+        menu.classList.add('show');
+    }
+}
+
+// Drawer dropdown toggle
+btnDownloadFile.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = drawerDownloadMenu.classList.contains('show');
+    closeAllDropdowns();
+    if (!isOpen) {
+        drawerDownloadMenu.classList.add('show');
+    }
+});
+
+// Close dropdowns on outside click
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.download-dropdown') && !e.target.closest('.card-download-dropdown')) {
+        closeAllDropdowns();
+    }
+});
+
+/* ==========================================================================
+   ZIP Download Functionality
+   ========================================================================== */
+function showZipLoading(brandName) {
+    const overlay = document.createElement('div');
+    overlay.className = 'zip-loading-overlay';
+    overlay.id = 'zip-loading-overlay';
+    overlay.innerHTML = `
+        <div class="zip-loading-card">
+            <div class="spinner"></div>
+            <h4>Packaging ${brandName}</h4>
+            <p>Collecting design tokens, components, and files...</p>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+}
+
+function hideZipLoading() {
+    const overlay = document.getElementById('zip-loading-overlay');
+    if (overlay) overlay.remove();
+}
+
+async function downloadAsZip(brandMeta) {
+    if (!brandMeta || !brandMeta.hasFullPackage) {
+        showToast('ZIP not available for this brand');
+        return;
+    }
+
+    showZipLoading(brandMeta.name);
+
+    try {
+        const zip = new JSZip();
+        const folder = zip.folder(brandMeta.brand + '-design-system');
+
+        // List of files to fetch
+        const filesToFetch = [];
+        
+        if (brandMeta.files) {
+            const fileMap = {
+                design: 'DESIGN.md',
+                tokens: 'tokens.css',
+                tailwind: 'tailwind-v4.css',
+                designTokens: 'design-tokens.json',
+                components: 'components.html',
+                componentsManifest: 'components.manifest.json',
+                usage: 'USAGE.md'
+            };
+
+            for (const [key, filename] of Object.entries(fileMap)) {
+                if (brandMeta.files[key]) {
+                    filesToFetch.push({
+                        path: `${brandMeta.packageDir}/${filename}`,
+                        name: filename
+                    });
+                }
+            }
+        }
+
+        // Always try to fetch manifest.json
+        filesToFetch.push({
+            path: `${brandMeta.packageDir}/manifest.json`,
+            name: 'manifest.json'
+        });
+
+        // Try to fetch preview files
+        if (brandMeta.hasPreview) {
+            const previewFiles = ['colors.html', 'typography.html', 'spacing.html'];
+            for (const pf of previewFiles) {
+                filesToFetch.push({
+                    path: `${brandMeta.packageDir}/preview/${pf}`,
+                    name: `preview/${pf}`
+                });
+            }
+        }
+
+        // Try to fetch source files
+        const sourceFiles = ['evidence.md', 'tokens.source.json', 'token-contract.report.json'];
+        for (const sf of sourceFiles) {
+            filesToFetch.push({
+                path: `${brandMeta.packageDir}/source/${sf}`,
+                name: `source/${sf}`
+            });
+        }
+
+        // Fetch all files in parallel
+        const results = await Promise.allSettled(
+            filesToFetch.map(async (f) => {
+                const url = getFileUrl(f.path);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const text = await response.text();
+                return { name: f.name, content: text };
+            })
+        );
+
+        // Add successful fetches to zip
+        let fileCount = 0;
+        for (const result of results) {
+            if (result.status === 'fulfilled') {
+                folder.file(result.value.name, result.value.content);
+                fileCount++;
+            }
+        }
+
+        if (fileCount === 0) {
+            throw new Error('No files could be fetched');
+        }
+
+        // Generate and download ZIP
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${brandMeta.brand}-design-system.zip`);
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showToast(`Downloaded ${brandMeta.name} package (${fileCount} files)`);
+    } catch (error) {
+        console.error('ZIP download failed:', error);
+        showToast(`Failed to create ZIP: ${error.message}`);
+    } finally {
+        hideZipLoading();
+    }
+}
+
+/* ==========================================================================
    Reader Drawer Logic & Markdown Rendering
    ========================================================================== */
 async function openReader(brandKey) {
@@ -218,6 +410,7 @@ async function openReader(brandKey) {
     if (!meta) return;
     
     selectedBrand = meta;
+    activeDrawerTab = 'design';
     drawerTitle.textContent = meta.name;
     drawerCategory.textContent = meta.category;
     drawerSize.textContent = meta.size;
@@ -227,41 +420,214 @@ async function openReader(brandKey) {
     sidebarNav.innerHTML = '';
     drawerPaletteList.innerHTML = '';
     
+    // Setup tabs visibility
+    setupDrawerTabs(meta);
+    
     // Open drawer overlay
     readerDrawer.classList.add('open');
     document.body.style.overflow = 'hidden'; // lock scrolling on main body
     
-    try {
-        // Fetch the file with robust URL resolution for GitHub Pages / local servers
-        const fileUrl = getFileUrl(meta.file);
-        const response = await fetch(fileUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    // Load the design tab content
+    await loadTabContent('design', meta);
+}
+
+function setupDrawerTabs(meta) {
+    const tabs = drawerTabs.querySelectorAll('.drawer-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active', 'disabled');
+        const tabName = tab.getAttribute('data-tab');
+        
+        if (tabName === 'design') {
+            tab.classList.add('active');
+        } else if (!meta.hasFullPackage) {
+            tab.classList.add('disabled');
+        } else {
+            // Check if specific files exist
+            const fileCheck = {
+                'tokens': meta.files && meta.files.tokens,
+                'components': meta.files && meta.files.components,
+                'usage': meta.files && meta.files.usage,
+                'preview': meta.hasPreview
+            };
+            if (!fileCheck[tabName]) {
+                tab.classList.add('disabled');
+            }
         }
-        
-        rawMarkdown = await response.text();
-        
-        // Parse markdown to HTML
-        let parsedHtml = marked.parse(rawMarkdown);
-        markdownBody.innerHTML = parsedHtml;
-        
-        // Highlight hex codes dynamically using DOM traversal
-        injectInlineColorChips(markdownBody);
-        
-        // Generate Index Navigation and visual swatches list
-        generateSidebarContent();
-        
+    });
+}
+
+// Tab click handler
+drawerTabs.addEventListener('click', async (e) => {
+    const tab = e.target.closest('.drawer-tab');
+    if (!tab || tab.classList.contains('disabled') || tab.classList.contains('active')) return;
+    
+    drawerTabs.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    activeDrawerTab = tab.getAttribute('data-tab');
+    await loadTabContent(activeDrawerTab, selectedBrand);
+});
+
+async function loadTabContent(tabName, meta) {
+    markdownBody.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading content...</p></div>';
+    
+    try {
+        switch (tabName) {
+            case 'design':
+                await loadDesignTab(meta);
+                break;
+            case 'tokens':
+                await loadTokensTab(meta);
+                break;
+            case 'components':
+                await loadComponentsTab(meta);
+                break;
+            case 'usage':
+                await loadUsageTab(meta);
+                break;
+            case 'preview':
+                await loadPreviewTab(meta);
+                break;
+        }
     } catch (error) {
-        console.error("Failed to load DESIGN file:", error);
+        console.error(`Failed to load ${tabName} tab:`, error);
         markdownBody.innerHTML = `
             <div class="empty-state">
                 <i class="fa-solid fa-triangle-exclamation" style="color:var(--accent-orange)"></i>
-                <h4>Failed to load guidelines</h4>
-                <p>The markdown file could not be read or does not exist in the root folder.</p>
+                <h4>Failed to load ${tabName}</h4>
+                <p>The file could not be read.</p>
                 <p style="font-size:0.8rem; color:var(--text-muted)">Details: ${error.message}</p>
             </div>
         `;
     }
+}
+
+async function loadDesignTab(meta) {
+    const fileUrl = getFileUrl(meta.file);
+    const response = await fetch(fileUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    rawMarkdown = await response.text();
+    let parsedHtml = marked.parse(rawMarkdown);
+    markdownBody.innerHTML = parsedHtml;
+    
+    // Highlight hex codes dynamically
+    injectInlineColorChips(markdownBody);
+    
+    // Generate sidebar content
+    generateSidebarContent();
+}
+
+async function loadTokensTab(meta) {
+    const fileUrl = getFileUrl(`${meta.packageDir}/tokens.css`);
+    const response = await fetch(fileUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const cssContent = await response.text();
+    markdownBody.innerHTML = `
+        <h2 style="font-family:var(--font-headings);margin-bottom:16px">
+            <i class="fa-solid fa-code" style="color:var(--accent-orange)"></i> Design Tokens (CSS Custom Properties)
+        </h2>
+        <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.9rem">
+            CSS variables for ${meta.name} — copy this file into your project for instant theming.
+        </p>
+        <div class="tab-code-display"><code>${escapeHtml(cssContent)}</code></div>
+    `;
+}
+
+async function loadComponentsTab(meta) {
+    const fileUrl = getFileUrl(`${meta.packageDir}/components.html`);
+    const response = await fetch(fileUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const htmlContent = await response.text();
+    
+    // Also try to load components manifest for a nice summary
+    let manifestHtml = '';
+    try {
+        const manifestUrl = getFileUrl(`${meta.packageDir}/components.manifest.json`);
+        const manifestResp = await fetch(manifestUrl);
+        if (manifestResp.ok) {
+            const manifest = await manifestResp.json();
+            if (manifest.components && Array.isArray(manifest.components)) {
+                manifestHtml = `
+                    <div style="margin-bottom:24px">
+                        <h3 style="font-family:var(--font-headings);font-size:1.1rem;margin-bottom:12px">
+                            <i class="fa-solid fa-cubes" style="color:var(--accent-orange)"></i> 
+                            ${manifest.components.length} Components Available
+                        </h3>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px">
+                            ${manifest.components.map(c => 
+                                `<span class="badge">${c.name || c.id || 'Component'}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    } catch (e) {
+        // Manifest load failed, not critical
+    }
+    
+    markdownBody.innerHTML = `
+        <h2 style="font-family:var(--font-headings);margin-bottom:16px">
+            <i class="fa-solid fa-cubes" style="color:var(--accent-orange)"></i> Component Library
+        </h2>
+        <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.9rem">
+            HTML component snippets for ${meta.name} — ready to drop into your project.
+        </p>
+        ${manifestHtml}
+        <div class="tab-code-display"><code>${escapeHtml(htmlContent)}</code></div>
+    `;
+}
+
+async function loadUsageTab(meta) {
+    const fileUrl = getFileUrl(`${meta.packageDir}/USAGE.md`);
+    const response = await fetch(fileUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    
+    const mdContent = await response.text();
+    markdownBody.innerHTML = marked.parse(mdContent);
+}
+
+async function loadPreviewTab(meta) {
+    const previewFiles = [
+        { name: 'Colors', file: 'colors.html' },
+        { name: 'Typography', file: 'typography.html' },
+        { name: 'Spacing', file: 'spacing.html' }
+    ];
+    
+    let tabsHtml = `<div class="preview-tabs">`;
+    previewFiles.forEach((pf, idx) => {
+        tabsHtml += `<button class="preview-tab-btn ${idx === 0 ? 'active' : ''}" 
+                       onclick="switchPreview(this, '${meta.packageDir}/preview/${pf.file}')">${pf.name}</button>`;
+    });
+    tabsHtml += `</div>`;
+    
+    const firstPreviewUrl = getFileUrl(`${meta.packageDir}/preview/${previewFiles[0].file}`);
+    
+    markdownBody.innerHTML = `
+        <h2 style="font-family:var(--font-headings);margin-bottom:16px">
+            <i class="fa-solid fa-eye" style="color:var(--accent-orange)"></i> Visual Preview
+        </h2>
+        ${tabsHtml}
+        <iframe class="preview-frame" id="preview-iframe" src="${firstPreviewUrl}" sandbox="allow-same-origin"></iframe>
+    `;
+}
+
+function switchPreview(btn, filePath) {
+    document.querySelectorAll('.preview-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const iframe = document.getElementById('preview-iframe');
+    if (iframe) {
+        iframe.src = getFileUrl(filePath);
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function closeReader() {
@@ -269,6 +635,7 @@ function closeReader() {
     document.body.style.overflow = ''; // restore scrolling
     selectedBrand = null;
     rawMarkdown = '';
+    closeAllDropdowns();
 }
 
 btnCloseDrawer.addEventListener('click', closeReader);
@@ -276,8 +643,12 @@ drawerOverlay.addEventListener('click', closeReader);
 
 // Handle ESC key to close drawer
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && readerDrawer.classList.contains('open')) {
-        closeReader();
+    if (e.key === 'Escape') {
+        if (document.querySelector('.download-dropdown-menu.show')) {
+            closeAllDropdowns();
+        } else if (readerDrawer.classList.contains('open')) {
+            closeReader();
+        }
     }
 });
 
@@ -394,7 +765,9 @@ btnCopyRaw.addEventListener('click', () => {
     showToast('Copied raw markdown to clipboard!');
 });
 
-btnDownloadFile.addEventListener('click', () => {
+// Drawer download: Markdown only
+btnDownloadMd.addEventListener('click', () => {
+    closeAllDropdowns();
     if (!selectedBrand || !rawMarkdown) return;
     
     const blob = new Blob([rawMarkdown], { type: 'text/markdown;charset=utf-8;' });
@@ -410,6 +783,13 @@ btnDownloadFile.addEventListener('click', () => {
     document.body.removeChild(link);
     
     showToast(`Downloading ${selectedBrand.file.split('/').pop()}`);
+});
+
+// Drawer download: ZIP
+btnDownloadZip.addEventListener('click', async () => {
+    closeAllDropdowns();
+    if (!selectedBrand) return;
+    await downloadAsZip(selectedBrand);
 });
 
 /* ==========================================================================
@@ -435,11 +815,19 @@ async function copyBrandRaw(event, brandKey) {
     }
 }
 
-async function downloadBrandFile(event, brandKey) {
+async function downloadBrandFile(event, brandKey, type) {
     event.stopPropagation();
+    closeAllDropdowns();
+    
     const meta = BRANDS_METADATA.find(b => b.brand === brandKey);
     if (!meta) return;
     
+    if (type === 'zip') {
+        await downloadAsZip(meta);
+        return;
+    }
+    
+    // Download Markdown only
     try {
         const fileUrl = getFileUrl(meta.file);
         const response = await fetch(fileUrl);
@@ -470,6 +858,8 @@ async function downloadBrandFile(event, brandKey) {
 window.openReader = openReader;
 window.copyBrandRaw = copyBrandRaw;
 window.downloadBrandFile = downloadBrandFile;
+window.toggleCardDropdown = toggleCardDropdown;
+window.switchPreview = switchPreview;
 
 /* ==========================================================================
    Initialization on Load

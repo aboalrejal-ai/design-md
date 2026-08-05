@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Design MD Hub | Ultimate AI Design Guidelines Catalog</title>
     <!-- SEO Meta Tags -->
-    <meta name="description" content="A curated collection of 93+ production-grade DESIGN.md files representing the design systems of top companies. Use with Claude Design, Cursor, and v0 to scaffold UI instantly.">
+    <meta name="description" content="A curated collection of 150+ production-grade design system packages representing the design systems of top companies. Use with Claude Design, Cursor, and v0 to scaffold UI instantly.">
     <meta name="keywords" content="design system, design.md, claude design, cursor rules, v0 design tokens, anthropic brand, visual guidelines, UI kit, frontend tokens">
     <meta name="author" content="Mohammed Abo Alrejal">
     
@@ -19,6 +19,9 @@
     
     <!-- Marked.js for Markdown Parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- JSZip for client-side ZIP generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     
     <!-- Stylesheet -->
     <link rel="stylesheet" href="index.css">
@@ -59,7 +62,7 @@
             </div>
             <h2>Universal Design Systems <br><span class="highlight">Tailored for AI Agents</span></h2>
             <p class="hero-desc">
-                An extensive, organized repository of <strong>93+ Design MD specifications</strong>. Copy any file directly into your AI context (Cursor, Claude Design, Gemini, or v0) to scaffold pixel-perfect, on-brand interfaces instantly.
+                An extensive, organized repository of <strong>150+ Design System packages</strong>. Copy any file directly into your AI context (Cursor, Claude Design, Gemini, or v0) to scaffold pixel-perfect, on-brand interfaces instantly.
             </p>
             
             <!-- Search & Filtering Box -->
@@ -73,8 +76,8 @@
             
             <!-- Stats -->
             <div class="stats-row">
-                <div class="stat-pill"><i class="fa-solid fa-folder-open"></i> <span id="stat-count">93</span> Specs</div>
-                <div class="stat-pill"><i class="fa-solid fa-shapes"></i> <span id="stat-cat-count">9</span> Categories</div>
+                <div class="stat-pill"><i class="fa-solid fa-folder-open"></i> <span id="stat-count">150</span> Specs</div>
+                <div class="stat-pill"><i class="fa-solid fa-shapes"></i> <span id="stat-cat-count">22</span> Categories</div>
                 <div class="stat-pill"><i class="fa-solid fa-code"></i> Production Ready</div>
             </div>
         </section>
@@ -117,15 +120,36 @@
                     <button id="btn-copy-raw" class="btn btn-primary btn-sm">
                         <i class="fa-solid fa-copy"></i> Copy Markdown
                     </button>
-                    <button id="btn-download-file" class="btn btn-outline btn-sm">
-                        <i class="fa-solid fa-download"></i> Download
-                    </button>
+                    <div class="download-dropdown" id="drawer-download-dropdown">
+                        <button id="btn-download-file" class="btn btn-outline btn-sm">
+                            <i class="fa-solid fa-download"></i> Download <i class="fa-solid fa-caret-down" style="margin-left:4px;font-size:0.7rem"></i>
+                        </button>
+                        <div class="download-dropdown-menu" id="drawer-download-menu">
+                            <button class="dropdown-item" id="btn-download-md">
+                                <i class="fa-solid fa-file-lines"></i> Markdown File
+                                <span class="dropdown-item-desc">.md file only</span>
+                            </button>
+                            <button class="dropdown-item" id="btn-download-zip">
+                                <i class="fa-solid fa-file-zipper"></i> Full Package (ZIP)
+                                <span class="dropdown-item-desc">All tokens, components & files</span>
+                            </button>
+                        </div>
+                    </div>
                     <button id="btn-close-drawer" class="btn-close" aria-label="Close Panel">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
             </div>
             
+            <!-- Drawer Tabs -->
+            <div class="drawer-tabs" id="drawer-tabs">
+                <button class="drawer-tab active" data-tab="design"><i class="fa-solid fa-paintbrush"></i> Design</button>
+                <button class="drawer-tab" data-tab="tokens"><i class="fa-solid fa-code"></i> Tokens CSS</button>
+                <button class="drawer-tab" data-tab="components"><i class="fa-solid fa-cubes"></i> Components</button>
+                <button class="drawer-tab" data-tab="usage"><i class="fa-solid fa-book"></i> Usage</button>
+                <button class="drawer-tab" data-tab="preview"><i class="fa-solid fa-eye"></i> Preview</button>
+            </div>
+
             <!-- Drawer Body -->
             <div class="drawer-body">
                 <!-- Left Outline Sidebar -->

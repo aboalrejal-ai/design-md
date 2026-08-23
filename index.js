@@ -24,6 +24,7 @@ const markdownBody = document.getElementById('markdown-body');
 const sidebarNav = document.getElementById('sidebar-nav');
 const drawerPaletteList = document.getElementById('drawer-palette-list');
 const btnCloseDrawer = document.getElementById('btn-close-drawer');
+const btnVisitSite = document.getElementById('btn-visit-site');
 const btnCopyRaw = document.getElementById('btn-copy-raw');
 const btnDownloadFile = document.getElementById('btn-download-file');
 const drawerTabs = document.getElementById('drawer-tabs');
@@ -169,6 +170,10 @@ function renderBrands() {
                     <span>View Guidelines</span> <i class="fa-solid fa-arrow-right"></i>
                 </button>
                 <div class="card-action-row">
+                    ${brand.website ? `
+                    <a class="btn btn-outline btn-sm btn-card-secondary btn-card-link" href="${brand.website}" target="_blank" rel="noopener noreferrer" title="Visit ${brand.name} Website" onclick="event.stopPropagation()">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>` : ''}
                     <button class="btn btn-outline btn-sm btn-card-secondary" onclick="copyBrandRaw(event, '${brand.brand}')" title="Copy Markdown">
                         <i class="fa-solid fa-copy"></i> Copy
                     </button>
@@ -414,6 +419,17 @@ async function openReader(brandKey) {
     drawerTitle.textContent = meta.name;
     drawerCategory.textContent = meta.category;
     drawerSize.textContent = meta.size;
+    
+    // Setup Visit Website button
+    if (btnVisitSite) {
+        if (meta.website) {
+            btnVisitSite.href = meta.website;
+            btnVisitSite.setAttribute('title', `Visit official ${meta.name} website / live guidelines`);
+            btnVisitSite.style.display = 'inline-flex';
+        } else {
+            btnVisitSite.style.display = 'none';
+        }
+    }
     
     // Clear previous drawer panel contents
     markdownBody.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Fetching design markdown guidelines...</p></div>';

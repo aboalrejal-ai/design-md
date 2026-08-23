@@ -115,6 +115,7 @@ a:hover {
     cursor: pointer;
     font-size: 0.95rem;
     transition: all var(--transition-fast);
+    text-decoration: none;
 }
 
 .btn-primary {
@@ -703,6 +704,35 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.btn-visit-site {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+    transition: all var(--transition-fast);
+}
+
+.btn-visit-site:hover {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+    background-color: rgba(217, 119, 87, 0.08);
+    transform: translateY(-1px);
+}
+
+.btn-card-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    text-decoration: none;
+}
+
+.btn-card-link:hover {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
 }
 
 .btn-close {
@@ -1379,6 +1409,26 @@ body.dark-mode .toast {
 }
 
 @media (max-width: 600px) {
+    .drawer-header {
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        position: relative;
+    }
+
+    .drawer-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .btn-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+    }
+
     .nav-links .curator-tag {
         display: none;
     }
